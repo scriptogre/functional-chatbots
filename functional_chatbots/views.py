@@ -49,3 +49,52 @@ def add_user_message(request, message: Form[str]):
 
     # 4. Trigger the `chatMessagesUpdated` client event
     return hx_trigger_response('chatMessagesUpdated')
+
+
+@app.post('/add-assistant-message')
+def add_assistant_message(request):
+    """
+    TODO: Implement the add_assistant_message view function
+    """
+    # 1. Initialize the Groq client
+    # llm_70b = ...
+    """
+    Notes:
+        - Set the `api_key` parameter to the value of GROQ_API_KEY env variable.
+        - You can use os.getenv() for this.
+    """
+
+    # 2. Get chat messages from session
+    # chat_messages = ...
+
+    # 3. Create a system message in the format {"role": "system", "content": "system_prompt_here"}
+    # system_message = ...
+
+    # 4. Get the completion using llm_70b.chat.completions.create method
+    # completion = ...
+    """
+    Notes:
+        - Set the `model` parameter to "llama3-70b-8192"
+        - The `messages` parameter expects a list in the format [{"role": "user", "content": "message"}, ...]
+        - Set `messages` parameter to a concatenation of system_message and chat_messages, with system_message first.
+    """
+
+    # 5. Extract the message content from the completion. It is found in completion.choices[0].message.content
+    # message_content = ...
+
+    # 6. Append assistant's message content to the chat messages list
+    # chat_messages.append(...)
+    """
+    Notes:
+        - The assistant's message should be in the format {"role": "assistant", "content": message_content}
+    """
+
+    # 7. Mark the session as modified to save the changes
+    # request.session.modified = True
+
+    # 8. Return empty response with `chatMessagesUpdated` client event
+    # return ...
+    """
+    Hints: 
+        - Use the `hx_trigger_response` utility function
+    """
