@@ -1,0 +1,77 @@
+{# This is an equivalent to base.html #}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Functional Chatbots | DjangoCon Europe 2024 | Christian Tanul</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+
+    <!-- HTMX -->
+    <script defer src="https://unpkg.com/htmx.org"></script>
+
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Enables animations with the `[animation:fade_0.5s_both]` class -->
+    <style type="text/tailwindcss">
+        @keyframes fade {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <!-- Iconify Icons (Iconify Web Component) -->
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <!-- To avoid layout shifts before the icons load -->
+    <style> iconify-icon { display: inline-block; width: 1em; height: 1em; } </style>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="font-['Barlow'] text-neutral-800 bg-gradient-to-br from-neutral-100 to-neutral-300">
+
+<!-- Main Content -->
+<main class="flex flex-col justify-center items-center h-screen pt-8 pb-14 px-6 z-10 [animation:fade_0.5s_both]">
+
+    <div class="flex flex-col text-center items-center justify-center transition-[margin-bottom] duration-[250ms] mb-3 sm:mb-6">
+        <a href="https://github.com/scriptogre/functional-chatbots/tree/0-start-here" target="_blank" class="sm:text-xl transition-[margin-bottom] duration-[250ms] mb-1.5 sm:mb-3">
+            <code>0-start-here</code>
+        </a>
+        <h2 class="text-lg sm:text-2xl mb-4">
+            Congrats! You've successfully set up the project. 🔥
+        </h2>
+        <p class="text-sm sm:text-lg">
+            Open <code>README.md</code> in the editor or click the branch name above to open it in GitHub.
+        </p>
+    </div>
+
+    {# The equivalent to {% block content %} #}
+    {{ content }}
+
+</main>
+
+<!-- Footer -->
+<footer class="flex items-center fixed right-1/2 translate-x-1/2 bottom-4 gap-2">
+
+    <!-- Github -->
+    <a href="https://github.com/scriptogre" target="_blank" class="p-1 text-neutral-500 hover:text-neutral-600 transition-colors" aria-label="Github">
+        <iconify-icon icon="akar-icons:github-fill" class="translate-y-1"></iconify-icon>
+    </a>
+
+    <!-- Linkedin -->
+    <a href="https://www.linkedin.com/in/christian-tanul-94333a17a/" target="_blank" class="p-1 text-neutral-500 hover:text-neutral-600 transition-colors" aria-label="LinkedIn">
+        <iconify-icon icon="akar-icons:linkedin-fill" class="translate-y-1"></iconify-icon>
+    </a>
+
+</footer>
+</body>
+</html>
