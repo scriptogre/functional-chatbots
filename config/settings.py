@@ -29,6 +29,7 @@ MIDDLEWARE = [
 ]
 # https://docs.djangoproject.com/en/5.0/topics/http/sessions/#using-cached-sessions
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_SAVE_EVERY_REQUEST = True  # Removes the need to write `request.session.modified = True`
 
 # https://docs.djangoproject.com/en/5.0/howto/static-files/#configuring-static-files
 STATIC_URL = "static/"

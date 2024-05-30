@@ -3,70 +3,30 @@
 <BaseLayout>
     <div class="flex flex-col gap-3 size-full max-w-full max-h-full transition-[max-width,max-height] duration-[250ms] sm:max-w-[500px] sm:max-h-[400px]">
 
-        <ChatContainer class="group">
+        <ChatContainer id="chat-container" class="group">
 
-            <div id="chat-messages"
-                 hx-get="/chat-messages"
-                 hx-trigger="chatMessagesUpdated from:body"
-                 hx-select="#chat-messages"
-                 hx-swap="outerHTML show:bottom"
-                 {# Notes:
-                       - The `show:bottom` modifier scrolls the chat to the bottom after the new messages are loaded.
+            <ChatMessage id="typing-indicator" class="hidden [body:has(#trigger-assistant.htmx-request)_&]:flex order-last [animation:fade_0.5s_both_0.25s]">
+                Typing...
+            </ChatMessage>
 
-                    References:
-                       hx-swap modifiers - https://htmx.org/attributes/hx-swap#modifiers #}
-            >
-
-                {% if chat_messages %}
-
-                    {% for message in chat_messages %}
-
-                        <ChatMessage role={message.role}>
-                            {{ message.content }}
-                        </ChatMessage>
-
-                    {% endfor %}
-
-                {% endif %}
-
-            </div>
-
-            <ChatPlaceholder class="group-has-[.chat-message]:hidden" />
+            <ChatPlaceholder class="group-has-[.chat-message:not(#typing-indicator)]:hidden" />
 
         </ChatContainer>
 
         <form id="user-message-form"
               hx-post="/add-user-message"
+              hx-target="#chat-container"
+              hx-swap="beforeend scroll:#chat-container:bottom"
               hx-on::after-request="htmx.find('input[name=message]').value = ''"
-              {# Notes:
-                    - We use the htmx's JS API & hx-on attribute to clear the input after request finishes.
-                        It's local & readable. Isn't that cool?
-
-                    - Forms automatically include any children <input> elements with a name attribute in the POST request.
-                        We don't need to use hx-include.
-
-                 References:
-                     hx-on - https://htmx.org/attributes/hx-on#hx-on-recommended
-                     htmx.find() - https://htmx.org/api/#find #}
         >
             <ChatInput name="message" required />
         </form>
 
-        <input id="trigger-assistant" type="hidden"
-                {# TODO: Automatically trigger the assistant to generate an answer after the user sends a message.
-
-                  Steps:
-                      1. When `htmx:afterRequest` event is dispatched from #user-message-form
-                      2. Issue POST requests to `/add-assistant-message`
-
-                  Notes:
-                      - Only `hx-post` & `hx-trigger` attributes need to be implemented.
-                      - The `htmx:afterRequest` event is dispatched after a response is received.
-                            Requesting `/add-assistant-message` after this event ensures the user's last message is
-                            included in the session's chat_messages before the assistant generates a response.
-
-                  References:
-                      htmx:afterRequest - https://htmx.org/events/#htmx:afterRequest #}
+        <div id="trigger-assistant"
+             hx-trigger="addAssistantMessage from:body"
+             hx-post="/add-assistant-message"
+             hx-target="#chat-container"
+             hx-swap="beforeend scroll:#chat-container:bottom"
         />
 
     </div>
