@@ -27,6 +27,10 @@
 
                     {% endfor %}
 
+                    <ChatMessage class="hidden [body:has(#trigger-assistant.htmx-request)_&]:flex [animation:fade_0.5s_both_0.25s]">
+                        Typing...
+                    </ChatMessage>
+
                 {% endif %}
 
             </div>
@@ -53,21 +57,8 @@
         </form>
 
         <input id="trigger-assistant" type="hidden"
-                {# TODO: Automatically trigger the assistant to generate an answer after the user sends a message.
-
-                  Steps:
-                      1. When `htmx:afterRequest` event is dispatched from #user-message-form
-                      2. Issue POST requests to `/add-assistant-message`
-
-                  Notes:
-                      - Only `hx-post` & `hx-trigger` attributes need to be implemented.
-                      - The `htmx:afterRequest` event is dispatched after a response is received.
-                            Requesting `/add-assistant-message` after this event ensures the user's last message is
-                            included in the session's chat_messages before the assistant generates a response.
-
-                  References:
-                      htmx:afterRequest - https://htmx.org/events/#htmx:afterRequest #}
-        />
+               hx-post="/add-assistant-message"
+               hx-trigger="htmx:afterRequest from:#user-message-form" />
 
     </div>
 </BaseLayout>

@@ -1,22 +1,16 @@
-# Task 1: Integrate the LLM within the htmx chat
+# ~~Task 1: Integrate the LLM within the htmx chat~~
 
-<img src="readme_assets/first-task.gif" width=800 alt="First Task"/>
+Congrats! You've successfully integrated the LLM within the htmx chat. 🎉
 
-You see a chat window, and you can send messages. However, nobody is answering. Let's change that.
+<img src="readme_assets/first-solution.gif" width=800 alt="First Solution"/>
 
-You have `TODO`s in the following files:
-1. `functional_chatbots/views.py` 
-2. `functional_chatbots/templates/pages/index.html`
-
-They include `Notes` & `Hints` to help you.
-
-After you're done, you should see the assistant responding to your messages.
-
-You have **10 minutes**. Good luck! 🚀
+You now have a basic chat application that can generate responses using LLama 3.
 
 # Next Steps
 
-Switch to the `2-integrate-llm-solution` branch to see the solution.
+But that's not too impressive, is it? Let's see what else we can do.
+
+Switch to the `3-client-events-task` branch to see the next task.
 ```bash
-git switch 2-integrate-llm-solution
+git switch 3-client-events-task
 ```
