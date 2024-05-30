@@ -3,54 +3,29 @@
 <BaseLayout>
     <div class="flex flex-col gap-3 size-full max-w-full max-h-full transition-[max-width,max-height] duration-[250ms] sm:max-w-[500px] sm:max-h-[400px]">
 
-        <ChatContainer class="group">
+        <ChatContainer id="chat-container" class="group">
 
-            <div id="chat-messages"
-                 hx-get="/chat-messages"
-                 hx-trigger="chatMessagesUpdated from:body"
-                 hx-select="#chat-messages"
-                 hx-swap="outerHTML show:bottom"
-                 {# Notes:
-                       - The `show:bottom` modifier scrolls the chat to the bottom after the new messages are loaded.
-
-                    References:
-                       hx-swap modifiers - https://htmx.org/attributes/hx-swap#modifiers #}
-            >
-
-                {% if chat_messages %}
-
-                    {% for message in chat_messages %}
-
-                        <ChatMessage role={message.role}>
-                            {{ message.content }}
-                        </ChatMessage>
-
-                    {% endfor %}
-
-                {% endif %}
-
-            </div>
-
-            <ChatPlaceholder class="group-has-[.chat-message]:hidden" />
+            <!-- Shown when there aren't any chat message -->
+            <ChatPlaceholder class="group-has-[.chat-message:not(#typing-indicator)]:hidden" />
 
         </ChatContainer>
 
         <form id="user-message-form"
               hx-post="/add-user-message"
+              hx-target="#chat-container"
+              hx-swap="beforeend scroll:#chat-container:bottom"
               hx-on::after-request="htmx.find('input[name=message]').value = ''"
-              {# Notes:
-                    - We use the htmx's JS API & hx-on attribute to clear the input after request finishes.
-                        It's local & readable. Isn't that cool?
-
-                    - Forms automatically include any children <input> elements with a name attribute in the POST request.
-                        We don't need to use hx-include.
-
-                 References:
-                     hx-on - https://htmx.org/attributes/hx-on#hx-on-recommended
-                     htmx.find() - https://htmx.org/api/#find #}
         >
             <ChatInput name="message" required />
         </form>
+
+        <div id="trigger-assistant"
+                {# TODO: Trigger an hx-post to `/add-assistant-message` when `addAssistantMessage` is received from the server
+                   References: 
+                        - HX-Trigger Response Header: https://htmx.org/headers/hx-trigger/
+                        - hx-trigger Attribute: https://htmx.org/attributes/hx-trigger/ 
+                #}
+        />
 
     </div>
 </BaseLayout>
