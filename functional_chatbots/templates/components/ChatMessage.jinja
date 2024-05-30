@@ -1,0 +1,14 @@
+{#def role="assistant" #}
+
+<div class="chat-message inline-flex items-end mb-4 gap-3 {% if not role == "assistant" %}flex-row-reverse{% endif %}">
+
+    {% if role == 'assistant' %}
+        <!-- Assistant Avatar -->
+        <img class="size-8 rounded-full object-cover" src="https://pyoneers.dev/assistant-avatar.webp" alt="Assistant Avatar" />
+    {% endif %}
+
+    <!-- Content -->
+    <div class="py-3 px-4 w-fit max-w-sm text-sm hyphens-auto whitespace-pre-wrap rounded-xl shadow duration-200 {% if role == 'assistant' %}bg-neutral-200 rounded-bl-none{% else %}bg-orange-300 rounded-br-none{% endif %}">
+        {{- content -}}
+    </div>
+</div>
