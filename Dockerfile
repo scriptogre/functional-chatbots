@@ -15,3 +15,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the project files to the working directory
 COPY . /code/
+
+# Make migrations and migrate
+RUN python manage.py makemigrations sessions
+RUN python manage.py makemigrations pizza_orders
+RUN python manage.py migrate sessions
+RUN python manage.py migrate pizza_orders

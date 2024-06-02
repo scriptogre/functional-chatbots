@@ -19,6 +19,7 @@ INSTALLED_APPS = [
 
     # Local apps
     "functional_chatbots",
+    "functional_chatbots.pizza_orders",
 ]
 
 # TEMPLATES = []  # We use JinjaX - configuration in `config/jinjax.py`
@@ -28,8 +29,15 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
 ]
 # https://docs.djangoproject.com/en/5.0/topics/http/sessions/#using-cached-sessions
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_SAVE_EVERY_REQUEST = True  # Removes the need to write `request.session.modified = True`
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ROOT_DIR / 'db.sqlite3',
+    }
+}
 
 # https://docs.djangoproject.com/en/5.0/howto/static-files/#configuring-static-files
 STATIC_URL = "static/"

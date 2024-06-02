@@ -2,7 +2,7 @@
 
 **Welcome to my workshop!** Today we're building this:
 
-<img src="readme_assets/showcase.gif" width=800 alt="Showcase"/>
+<img src="https://cdn.jsdelivr.net/gh/scriptogre/functional-chatbots-assets@main/0-start-here/application_final_version.gif" width=800 alt="Showcase"/>
 
 `README.md` contains the setup instructions, project structure details, and an overview of the tools we'll use throughout the workshop.
 
@@ -45,7 +45,7 @@ I tried to keep things simple, but there are lots to cover in only 50 minutes.
 # Django-Ninja
 
 <a href="https://django-ninja.dev/">
-    <img src="readme_assets/django-ninja.webp" alt="Django-Ninja" width=700 />
+    <img src="https://cdn.jsdelivr.net/gh/scriptogre/functional-chatbots-assets@main/0-start-here/django_ninja.webp" alt="Django-Ninja" width=700 />
 </a>
 
 > Wait, what?! You want to render templates with Django-Ninja?
@@ -65,10 +65,8 @@ Besides, it uses **Pydantic**.
 # htmx
 
 <a href="https://htmx.org">
-    <img src="readme_assets/htmx.webp" alt="HTMX" width=700/>
+    <img src="https://cdn.jsdelivr.net/gh/scriptogre/functional-chatbots-assets@main/0-start-here/htmx.webp" alt="HTMX" width=700/>
 </a>
-
-> Grug from [The Grug Brained Developer](https://grugbrain.dev/) by Carson Gross (creator of [htmx](https://htmx.org/)). Love the article.
 
 We'll use [htmx](https://htmx.org/) to easily add interactivity to our project, like updating chat messages, or
 creating/updating/deleting pizza orders - without writing any JavaScript.
@@ -76,15 +74,17 @@ creating/updating/deleting pizza orders - without writing any JavaScript.
 ### Why htmx?
 
 <a href="https://grugbrain.dev/">
-    <img src="readme_assets/grug.webp" alt="Grug Brain Developer" width=200/>
+    <img src="https://cdn.jsdelivr.net/gh/scriptogre/functional-chatbots-assets@main/0-start-here/grug.webp" alt="Grug Brain Developer" width=200/>
 </a>
+
+> Grug from [The Grug Brained Developer](https://grugbrain.dev/) by Carson Gross (creator of [htmx](https://htmx.org/)). Love the article.
 
 complexity _bad_
 
 # JinjaX
 
 <a href="https://jinjax.scaletti.dev/">  
-    <img src="readme_assets/jinjax.webp" alt="JinjaX Logo" width="700"/>
+    <img src="https://cdn.jsdelivr.net/gh/scriptogre/functional-chatbots-assets@main/0-start-here/jinjax.webp" alt="JinjaX Logo" width="700"/>
 </a>
 
 We'll use [JinjaX](https://jinjax.scaletti.dev/) in our templates, an experimental project that's essentially Jinja2 with JSX-like syntax for components.
@@ -111,7 +111,7 @@ Most importantly, it enables keeping **behaviour** (`hx-*` attributes) explicit,
 I've written a [blog about JinjaX](https://tanulchristian.dev/blogs/will_jinjax_replace_django_templates), if you're curious.
 
 <a href="https://tanulchristian.dev/blogs/will_jinjax_replace_django_templates">  
-    <img src="https://cdn.jsdelivr.net/gh/scriptogre/functional-chatbots-static/jinjax-blog-snippet.webp" alt="JinjaX Blog Snippet" width="500"/>  
+    <img src="https://cdn.jsdelivr.net/gh/scriptogre/functional-chatbots-assets/0-start-here/blog_snippet.webp" alt="JinjaX Blog Snippet" width="500"/>  
 </a>  
 
 Similar projects include:
@@ -120,10 +120,6 @@ Similar projects include:
 - [`django-template-partials`](https://github.com/carltongibson/django-template-partials) _(Hi Carlton! Love your projects 💚)_
 
 # TailwindCSS
-
-<a href="https://tailwindcss.com/">  
-    <img src="tailwindcss.webp" alt="TailwindCSS" width="700"/>
-</a>
 
 We'll use TailwindCSS for styling.
 
@@ -152,9 +148,11 @@ By creating custom variants (like `hover:` or `dark:`), we can also do stuff lik
 </ChatMessage>
 ```
 
-You can now add a lot of interactivity with CSS that used to need JavaScript, but it's not always easy.
+CSS is very powerful nowadays.
 
-TailwindCSS makes it simple.
+Smooth transitions, animations, and even conditional displaying can be achieved with it (e.g. `group-has-[.chat-message]:hidden`).
+
+TailwindCSS makes it easier to harness that power.
 
 | Tools              | Less JavaScript |
 |--------------------|-----------------|
@@ -164,7 +162,7 @@ TailwindCSS makes it simple.
 # GroqCloud API
 
 <a href="https://www.groq.com/">  
-    <img src="https://cdn.mos.cms.futurecdn.net/msjJrNRMLFJoN22LUAURdM.png" alt="Groq" width="700"/>  
+    <img src="https://cdn.jsdelivr.net/gh/scriptogre/functional-chatbots-assets/0-start-here/groq.webp" alt="Groq" width="700"/>  
 </a>  
 
 We'll use **GroqCloud**'s free API to interact with **LLama 3 70B**, an open-source model.
@@ -185,11 +183,26 @@ Their free tier offers **30 requests per minute**. That's 1 request every 2 seco
 # Instructor
 
 <a href="https://python.useinstructor.com/">  
-   <img src="readme_assets/instructor.webp" alt="Instructor Logo" width="700"/>
+   <img src="https://cdn.jsdelivr.net/gh/scriptogre/functional-chatbots-assets/0-start-here/instructor.webp" alt="Instructor Logo" width="700"/>
 </a>
 
 Instructor is a Python library that does the heavy lifting for getting structured responses from LLMs.
 
 ### Why Instructor?
 
-We can use it with Groq's API and it saves us from writing a lot of code.
+It has support for Groq's API, and it will save us from a lot of effort (and boilerplate).
+
+### Make sure to also check out this branch's `PROGRESS.md` file
+
+# Feedback
+
+This was my first workshop. 
+
+I'd love to her your thoughts. I'd appreciate to know whether I should pursue this further or stop
+wasting people's time.
+
+## Scan this big-ass QR code
+
+...please 👉👈
+
+ <img src="https://cdn.jsdelivr.net/gh/scriptogre/functional-chatbots-assets/feedback-form-qr-code.png" alt="Feedback Form QR Code" width="500"/>

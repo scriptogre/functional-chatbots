@@ -2,91 +2,109 @@
     request,
     chat_messages=[],
     is_dark_mode=False,
-    is_fullscreen_mode=False
+    is_fullscreen_mode=False,
+    is_pizza_mode=False,
+    pizza_orders=[]
 #}
 
 <BaseLayout>
 
-    <!-- Checkboxes (Dark mode, Fullscreen mode) -->
+    <!-- Toggles (Dark Mode, Fullscreen Mode, Pizza Mode) -->
     <div class="absolute right-5 top-4 flex items-center gap-2">
 
-        <!-- Dark Mode Checkbox -->
-        <input name="is_dark_mode" type="checkbox" autocomplete="off" {% if is_dark_mode %}checked{% endif %}
-               hx-post="/toggle-dark-mode"
-               hx-trigger="click, toggleDarkMode from:body"
-               hx-select="input[name=is_dark_mode]"
-               hx-swap="outerHTML"
+        <DarkModeToggle id="dark-mode-toggle" name="is_dark_mode" checked={is_dark_mode}
+                        hx-post="/toggle-dark-mode"
+                        hx-trigger="click, toggleDarkMode from:body delay:100ms"
+                        hx-select="#dark-mode-toggle"
+                        hx-swap="outerHTML"
         />
 
-        <!-- Fullscreen Mode Checkbox -->
-        <input name="is_fullscreen_mode" type="checkbox" autocomplete="off" {% if is_fullscreen_mode %}checked{% endif %}
-               hx-post="/toggle-fullscreen-mode"
-               hx-trigger="click, toggleFullscreenMode from:body delay:250ms"
-               hx-select="input[name=is_fullscreen_mode]"
-               hx-swap="outerHTML"
+        <FullscreenModeToggle id="fullscreen-mode-toggle" name="is_fullscreen_mode" checked={is_fullscreen_mode} class="hidden sm:inline-flex"
+                              hx-post="/toggle-fullscreen-mode"
+                              hx-trigger="click, toggleFullscreenMode from:body delay:200ms"
+                              hx-select="#fullscreen-mode-toggle"
+                              hx-swap="outerHTML"
         />
 
-    </div> <!-- End of Checkboxes -->
+        <PizzaModeToggle id="pizza-mode-toggle" name="is_pizza_mode" checked={is_pizza_mode}
+                         hx-post="/toggle-pizza-mode"
+                         hx-trigger="click, togglePizzaMode from:body delay:300ms"
+                         hx-select="#pizza-mode-toggle"
+                         hx-swap="outerHTML"
+        />
+
+    </div> <!-- End of Toggles -->
+
+    <!-- Pizza Orders -->
+    <div class="size-full max-h-[0px] max-sm:pizza:max-h-[33%] sm:max-h-full sm:h-[400px] sm:fullscreen:h-full sm:max-w-0 sm:pizza:max-w-[400px] flex-col gap-3 pizza:mb-3 sm:pizza:mb-0 sm:pizza:me-3 opacity-0 pizza:opacity-100 pointer-events-none pizza:pointer-events-auto transition-[height,max-width,max-height] will-change-[height,max-height,max-width]">
+
+        <PizzaOrdersContainer class="group">
+
+            <div id="pizza-orders" class="flex flex-col max-h-[calc(100%-3.5rem)] overflow-scroll"
+                 hx-get="/pizza-orders"
+                 hx-select="#pizza-orders"
+                 hx-swap="outerHTML"
+                 hx-trigger="pizzaOrdersUpdated from:body"
+                 hx-disinherit="hx-select"
+            >
+                {% for order in pizza_orders %}
+                    <PizzaOrder pizza_order={order}
+                                hx-get={"/pizza-orders/"~order.id~"/update"}
+                                hx-target="body"
+                                hx-swap="beforeend"
+                    />
+                {% endfor %}
+
+            </div>
+
+            <!-- Shown (at the bottom) when there are pizza orders -->
+            <Button id="add-pizza-order-button" class="hidden group-has-[.pizza-order]:block text-black bg-orange-500 hover:bg-orange-600 dark:bg-amber-500 dark:hover:bg-amber-400"
+                    hx-get="/pizza-orders/add"
+                    hx-target="body"
+                    hx-swap="beforeend">
+                Add Pizza Order
+            </Button>
+
+            <!-- Shown when there aren't any pizza orders -->
+            <PizzaOrderPlaceholder id="pizza-orders-placeholder" class="group-has-[.pizza-order]:hidden"
+                                   hx-get="/pizza-orders/add"
+                                   hx-target="body"
+                                   hx-swap="beforeend"
+            />
+
+        </PizzaOrdersContainer>
+
+    </div> <!-- End of Pizza Orders -->
 
     <!-- Chat -->
     <div class="flex flex-col gap-3 w-full h-full sm:max-w-[500px] sm:max-h-[400px] sm:fullscreen:max-w-full sm:fullscreen:max-h-full max-w-xl sm:fullscreen:max-w-full transition-[max-width,max-height]">
 
-        <ChatContainer class="group">
+        <ChatContainer id="chat-container" class="group">
 
-            <div id="chat-messages"
-                 hx-get="/chat-messages"
-                 hx-trigger="chatMessagesUpdated from:body"
-                 hx-select="#chat-messages"
-                 hx-swap="outerHTML show:bottom"
-                 {# Notes:
-                       - The `show:bottom` modifier scrolls the chat to the bottom after the new messages are loaded.
+            <!-- Shown when the assistant's message is being triggered -->
+            <ChatMessage id="typing-indicator" class="hidden order-last [body:has(#trigger-assistant.htmx-request)_&]:flex [animation:fade_0.5s_both_0.25s]">
+                Typing...
+            </ChatMessage>
 
-                    References:
-                       hx-swap modifiers - https://htmx.org/attributes/hx-swap#modifiers #}
-            >
-
-                {% if chat_messages %}
-
-                    {% for message in chat_messages %}
-
-                        <ChatMessage role={message.role}>
-                            {{ message.content }}
-                        </ChatMessage>
-
-                    {% endfor %}
-
-                    <ChatMessage class="hidden [body:has(#trigger-assistant.htmx-request)_&]:flex [animation:fade_0.5s_both_0.25s]">
-                        Typing...
-                    </ChatMessage>
-
-                {% endif %}
-
-            </div>
-
-            <ChatPlaceholder class="group-has-[.chat-message]:hidden" />
+            <!-- Shown when there aren't any chat message -->
+            <ChatPlaceholder class="group-has-[.chat-message:not(#typing-indicator)]:hidden" />
 
         </ChatContainer>
 
         <form id="user-message-form"
               hx-post="/add-user-message"
+              hx-target="#chat-container"
+              hx-swap="beforeend scroll:#chat-container:bottom"
               hx-on::after-request="htmx.find('input[name=message]').value = ''"
-              {# Notes:
-                    - We use the htmx's JS API & hx-on attribute to clear the input after request finishes.
-                        It's local & readable. Isn't that cool?
-
-                    - Forms automatically include any children <input> elements with a name attribute in the POST request.
-                        We don't need to use hx-include.
-
-                 References:
-                     hx-on - https://htmx.org/attributes/hx-on#hx-on-recommended
-                     htmx.find() - https://htmx.org/api/#find #}
         >
             <ChatInput name="message" required />
         </form>
 
         <input id="trigger-assistant" type="hidden"
                hx-post="/add-assistant-message"
-               hx-trigger="htmx:afterRequest from:#user-message-form" />
+               hx-target="#chat-container"
+               hx-swap="beforeend scroll:#chat-container:bottom"
+               hx-trigger="generateAssistantMessage from:body" />
 
     </div> <!-- End of Chat -->
 

@@ -18,9 +18,13 @@ catalog = Catalog()
 
 # 2. Register components
 catalog.add_folder(TEMPLATES_DIR / "components")
+catalog.add_folder(TEMPLATES_DIR / "components/chat")
+catalog.add_folder(TEMPLATES_DIR / "components/pizza_orders")
+catalog.add_folder(TEMPLATES_DIR / "components/toggles")
 
 # 3. Register layouts
 catalog.add_folder(TEMPLATES_DIR / "layouts")
 
 # 4. Register pages
 catalog.add_folder(TEMPLATES_DIR / "pages")
+catalog.add_folder(TEMPLATES_DIR / "pages/pizza_orders")

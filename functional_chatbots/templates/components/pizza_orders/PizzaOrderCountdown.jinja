@@ -1,0 +1,13 @@
+{#def seconds_left #}
+
+<div {{ attrs.render(class="inline-flex leading-[1em] overflow-y-hidden") }}>
+    <span class="inline-block h-[1em] transition-colors duration-[250ms] before:transition-all before:duration-[250ms] before:text-center before:whitespace-pre before:top-[calc(var(--seconds-left)*-1em)] before:relative before:content-['00\A_01\A_02\A_03\A_04\A_05\A_06\A_07\A_08\A_09\A_10\A_11\A_12\A_13\A_14\A_15\A_16\A_17\A_18\A_19\A_20\A_21\A_22\A_23\A_24\A_25\A_26\A_27\A_28\A_29\A_30\A_31\A_32\A_33\A_34\A_35\A_36\A_37\A_38\A_39\A_40\A_41\A_42\A_43\A_44\A_45\A_46\A_47\A_48\A_49\A_50\A_51\A_52\A_53\A_54\A_55\A_56\A_57\A_58\A_59\A_60\A_61\A_62\A_63\A_64\A_65\A_66\A_67\A_68\A_69\A_70\A_71\A_72\A_73\A_74\A_75\A_76\A_77\A_78\A_79\A_80\A_81\A_82\A_83\A_84\A_85\A_86\A_87\A_88\A_89\A_90\A_91\A_92\A_93\A_94\A_95\A_96\A_97\A_98\A_99\A_100\A_101\A_102\A_103\A_104\A_105\A_106\A_107\A_108\A_109\A_110\A_111\A_112\A_113\A_114\A_115\A_116\A_117\A_118\A_119\A_120\A_121\A_122\A_123\A_124\A_125\A_126\A_127\A_128\A_129\A_130\A_131\A_132\A_133\A_134\A_135\A_136\A_137\A_138\A_139\A_140\A_141\A_142\A_143\A_144\A_145\A_146\A_147\A_148\A_149\A_150\A_151\A_152\A_153\A_154\A_155\A_156\A_157\A_158\A_159\A_160\A_161\A_162\A_163\A_164\A_165\A_166\A_167\A_168\A_169\A_170\A_171\A_172\A_173\A_174\A_175\A_176\A_177\A_178\A_179\A_180\A_181\A_182\A_183\A_184\A_185\A_186\A_187\A_188\A_189\A_190\A_191\A_192\A_193\A_194\A_195\A_196\A_197\A_198\A_199\A_200']"
+          style="--seconds-left: {{ seconds_left }};"
+          _="init
+                set seconds_left to {{ seconds_left }}
+                repeat until seconds_left is 0
+                    wait 1s
+                    set seconds_left to seconds_left - 1
+                    me.style.setProperty('--seconds-left', seconds_left)"
+    ></span>
+</div>
