@@ -4,24 +4,9 @@
 
 <img src="readme_assets/showcase.gif" width=800 alt="Showcase"/>
 
+`README.md` contains the setup instructions, project structure details, and an overview of the tools we'll use throughout the workshop.
 
-## Project Milestones
-
-Follow the progress table below to see the different milestones / branches for this workshop.
-
-| Branch                      | Status | Type     | Description                                                |
-|-----------------------------|--------|----------|------------------------------------------------------------|
-| `0-start-here`              | ✅      | Start    | Set up the project, get familiar with the codebase.        |
-| `1-integrate-llm-task`      | ⏳      | **Task** | **Integrate the LLM within the htmx chat.**                |
-| `2-integrate-llm-solution`  | ⏭      | Solution |                                                            |
-| `3-client-events-task`      | ⏭      | Task     | Enable the LLM to trigger dark mode & fullscreen mode.     |
-| `4-client-events-solution`  | ⏭      | Solution |                                                            |
-| `5-server-actions-task`     | ⏭      | Task     | Enable the LLM to create, update, and delete pizza orders. |
-| `6-server-actions-solution` | ⏭      | Solution |                                                            |
-
-To switch to another branch, use `git switch` (e.g. `git switch 1-integrate-llm-task`).
-
-Each branch includes a `TODO.md` file with instructions on what to do next.
+`PROGRESS.md` includes the task at hand, extra challenges, and next steps. Make sure to check it out **whenever you switch branches**.
 
 # Requirements
 

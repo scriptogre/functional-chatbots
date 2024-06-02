@@ -1,8 +1,13 @@
 import os
+from typing import Literal, List
 
-import groq
+import instructor
+from groq import Groq
 from ninja import NinjaAPI, Form
+from pydantic import BaseModel
 
+from functional_chatbots.prompts import SYSTEM_PROMPT, DARK_MODE_ON_INSTRUCTIONS, FULLSCREEN_MODE_ON_INSTRUCTIONS, \
+    DARK_MODE_OFF_INSTRUCTIONS, FULLSCREEN_MODE_OFF_INSTRUCTIONS
 from functional_chatbots.utils import render, hx_trigger_response
 
 
@@ -11,82 +16,111 @@ app = NinjaAPI()
 
 @app.get('/')
 def index(request):
-    # 1. Initialize `chat_messages` in session
-    request.session['chat_messages'] = chat_messages = []
+    # Initialize the session state
+    request.session['chat_messages'] = []
+    request.session['is_dark_mode'] = False
+    request.session['is_fullscreen_mode'] = False
 
-    # 2. Render the index template
-    return render(request, 'index', {'chat_messages': chat_messages})
+    # Render the index template
+    return render(
+        request,
+        'index',
+        {
+            'chat_messages': request.session['chat_messages'],
+            'is_dark_mode': request.session['is_dark_mode'],
+            'is_fullscreen_mode': request.session['is_fullscreen_mode']
+        }
+    )
 
 
 @app.get('/chat-messages')
 def list_chat_messages(request):
-    """
-    Notes:
-        - This view is called by htmx in our #chat-messages element, upon receiving the `chatMessagesUpdated` event.
-        - We use `hx-select` to select only the updated #chat-messages element from the response.
-    """
-    # 1. Get chat messages from session
+    # Get chat messages from session
     chat_messages = request.session.get('chat_messages', [])
 
-    # 2. Render the index template with the updated chat messages
+    # Render the index template with the updated chat messages
     return render(request, 'index', {'chat_messages': chat_messages})
 
 
 @app.post('/add-user-message')
 def add_user_message(request, message: Form[str]):
-    """
-    Notes:
-        - We can parse request.POST data directly from our view function parameters, saving some boilerplate.
-
-    References:
-        - https://django-ninja.dev/guides/input/form-params/
-    """
-    # 1. Get chat messages from session
+    # Get chat messages from session
     chat_messages = request.session.get('chat_messages', [])
 
-    # 2. Add user message to session
+    # Add user message to session
     chat_messages.append({'role': 'user', 'content': message})
 
-    # 3. Trigger the `chatMessagesUpdated` client event
+    # Trigger the `chatMessagesUpdated` client event
     return hx_trigger_response('chatMessagesUpdated')
 
 
 @app.post('/add-assistant-message')
 def add_assistant_message(request):
-    # 1. Initialize the Groq client
-    llm_70b = groq.Groq(api_key=os.environ.get('GROQ_API_KEY'))
+    # Initialize Groq client
+    llm_70b = Groq(api_key=os.environ.get('GROQ_API_KEY'))
 
-    # 2. Get chat messages from session
-    chat_messages = request.session.get('chat_messages', [])
+    # Apply instructor to LLM client
+    structured_llm_70b = instructor.from_groq(llm_70b, mode=instructor.Mode.JSON)
 
-    # 3. Create a system message
+    # Get state of dark & fullscreen mode
+    is_dark_mode = request.session.get('is_dark_mode', False)
+    is_fullscreen_mode = request.session.get('is_fullscreen_mode', False)
+
+    # Add instructions based on these states
     system_message = {
         "role": "system",
-        "content": "Respond with a witty & amusing haiku roasting the user for not changing the system prompt."
-                   "Encourage the user to update it."
+        "content": (
+                SYSTEM_PROMPT
+                + (DARK_MODE_ON_INSTRUCTIONS if is_dark_mode else DARK_MODE_OFF_INSTRUCTIONS)
+                + (FULLSCREEN_MODE_ON_INSTRUCTIONS if is_fullscreen_mode else FULLSCREEN_MODE_OFF_INSTRUCTIONS)
+        )
     }
 
-    try:
-        # 4. Get the LLM completion
-        completion = llm_70b.chat.completions.create(
-            model="llama3-70b-8192",
-            messages=[system_message] + chat_messages
-        )
+    # Get chat messages
+    chat_messages = request.session.get('chat_messages', [])
 
-        # 5. Extract the message content from the completion
-        message_content = completion.choices[0].message.content
+    # Define LLM response schema
+    class LLMResponse(BaseModel):
+        reasoning: str
+        client_events: List[Literal["toggleDarkMode", "toggleFullscreenMode"]] = []
+        message: str
 
-        # 6. Append assistant's message content to the chat messages list
-        chat_messages.append({"role": "assistant", "content": message_content})
-        """
-        Notes:
-            - The assistant's message should be in the format {"role": "assistant", "content": message_content}
-        """
+    # Generate LLM response with defined schema
+    llm_response = structured_llm_70b.chat.completions.create(
+        model="llama3-70b-8192",
+        messages=[system_message] + chat_messages,
+        response_model=LLMResponse
+    )
 
-    except groq.AuthenticationError:
-        chat_messages.append(
-            {'role': 'assistant', 'content': "Set the GROQ_API_KEY environment variable & re-build Docker image."}
-        )
+    # Add assistant message to session
+    chat_messages.append({'role': 'assistant', 'content': llm_response.json()})
 
-    # 7. Trigger the `chatMessagesUpdated` event
-    return hx_trigger_response('chatMessagesUpdated')
+    # Join chatMessagesUpdated event with events from LLM response (if any)
+    hx_triggers = ['chatMessagesUpdated'] + llm_response.client_events
+
+    return hx_trigger_response(hx_triggers)
+
+
+"""
+Client Actions: Dark Mode and Fullscreen Mode
+
+These endpoints toggle the session state, then render the index template with the updated toggle state.
+"""
+
+
+@app.post('/toggle-dark-mode')
+def toggle_dark_mode(request):
+    # Toggle state of `is_dark_mode`
+    request.session['is_dark_mode'] = not request.session.get('is_dark_mode', False)
+
+    # Render index with updated `is_dark_mode` state
+    return render(request, 'index', {'is_dark_mode': request.session['is_dark_mode']})
+
+
+@app.post('/toggle-fullscreen-mode')
+def toggle_fullscreen_mode(request):
+    # Toggle state of `is_fullscreen_mode`
+    request.session['is_fullscreen_mode'] = not request.session.get('is_fullscreen_mode', False)
+
+    # Render index with updated `is_fullscreen_mode` state
+    return render(request, 'index', {'is_fullscreen_mode': request.session['is_fullscreen_mode']})

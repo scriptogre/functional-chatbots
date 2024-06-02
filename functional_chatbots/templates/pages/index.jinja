@@ -1,7 +1,35 @@
-{#def request, chat_messages=[] #}
+{#def
+    request,
+    chat_messages=[],
+    is_dark_mode=False,
+    is_fullscreen_mode=False
+#}
 
 <BaseLayout>
-    <div class="flex flex-col gap-3 size-full max-w-full max-h-full transition-[max-width,max-height] duration-[250ms] sm:max-w-[500px] sm:max-h-[400px]">
+
+    <!-- Checkboxes (Dark mode, Fullscreen mode) -->
+    <div class="absolute right-5 top-4 flex items-center gap-2">
+
+        <!-- Dark Mode Checkbox -->
+        <input name="is_dark_mode" type="checkbox" autocomplete="off" {% if is_dark_mode %}checked{% endif %}
+               hx-post="/toggle-dark-mode"
+               hx-trigger="click, toggleDarkMode from:body"
+               hx-select="input[name=is_dark_mode]"
+               hx-swap="outerHTML"
+        />
+
+        <!-- Fullscreen Mode Checkbox -->
+        <input name="is_fullscreen_mode" type="checkbox" autocomplete="off" {% if is_fullscreen_mode %}checked{% endif %}
+               hx-post="/toggle-fullscreen-mode"
+               hx-trigger="click, toggleFullscreenMode from:body delay:250ms"
+               hx-select="input[name=is_fullscreen_mode]"
+               hx-swap="outerHTML"
+        />
+
+    </div> <!-- End of Checkboxes -->
+
+    <!-- Chat -->
+    <div class="flex flex-col gap-3 w-full h-full sm:max-w-[500px] sm:max-h-[400px] sm:fullscreen:max-w-full sm:fullscreen:max-h-full max-w-xl sm:fullscreen:max-w-full transition-[max-width,max-height]">
 
         <ChatContainer class="group">
 
@@ -60,5 +88,6 @@
                hx-post="/add-assistant-message"
                hx-trigger="htmx:afterRequest from:#user-message-form" />
 
-    </div>
+    </div> <!-- End of Chat -->
+
 </BaseLayout>
