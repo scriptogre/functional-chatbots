@@ -1,64 +1,62 @@
-{#def request, chat_messages=[] #}
+{#def
+    request,
+    chat_messages=[],
+    is_dark_mode=False,
+    is_fullscreen_mode=False
+#}
 
 <BaseLayout>
-    <div class="flex flex-col gap-3 size-full max-w-full max-h-full transition-[max-width,max-height] duration-[250ms] sm:max-w-[500px] sm:max-h-[400px]">
 
-        <ChatContainer class="group">
+    <!-- Checkboxes (Dark mode, Fullscreen mode) -->
+    <div class="absolute right-5 top-4 flex items-center gap-2">
 
-            <div id="chat-messages"
-                 hx-get="/chat-messages"
-                 hx-trigger="chatMessagesUpdated from:body"
-                 hx-select="#chat-messages"
-                 hx-swap="outerHTML show:bottom"
-                 {# Notes:
-                       - The `show:bottom` modifier scrolls the chat to the bottom after the new messages are loaded.
+        <!-- Dark Mode Checkbox -->
+        <input name="is_dark_mode" type="checkbox" autocomplete="off" {% if is_dark_mode %}checked{% endif %}
+               {# TODO: Fulfill the assistant's wish to be able to trigger this #}
+               hx-post="/toggle-dark-mode"
+               hx-select="input[name=is_dark_mode]"
+               hx-swap="outerHTML"
+        />
 
-                    References:
-                       hx-swap modifiers - https://htmx.org/attributes/hx-swap#modifiers #}
-            >
+        <!-- Fullscreen Mode Checkbox -->
+        <input name="is_fullscreen_mode" type="checkbox" autocomplete="off" {% if is_fullscreen_mode %}checked{% endif %}
+               {# TODO: Fulfill the assistant's wish to be able to trigger this #}
+               hx-post="/toggle-fullscreen-mode"
+               hx-select="input[name=is_fullscreen_mode]"
+               hx-swap="outerHTML"
+        />
 
-                {% if chat_messages %}
+    </div> <!-- End of Checkboxes -->
 
-                    {% for message in chat_messages %}
+    <!-- Chat -->
+    <div class="flex flex-col gap-3 w-full h-full sm:max-w-[500px] sm:max-h-[400px] sm:fullscreen:max-w-full sm:fullscreen:max-h-full max-w-xl sm:fullscreen:max-w-full transition-[max-width,max-height]">
 
-                        <ChatMessage role={message.role}>
-                            {{ message.content }}
-                        </ChatMessage>
+        <ChatContainer id="chat-container" class="group">
 
-                    {% endfor %}
+            <ChatMessage id="typing-indicator" class="hidden [body:has(#trigger-assistant.htmx-request)_&]:flex order-last [animation:fade_0.5s_both_0.25s]">
+                Typing...
+            </ChatMessage>
 
-                    <ChatMessage class="hidden [body:has(#trigger-assistant.htmx-request)_&]:flex [animation:fade_0.5s_both_0.25s]">
-                        Typing...
-                    </ChatMessage>
-
-                {% endif %}
-
-            </div>
-
-            <ChatPlaceholder class="group-has-[.chat-message]:hidden" />
+            <ChatPlaceholder class="group-has-[.chat-message:not(#typing-indicator)]:hidden" />
 
         </ChatContainer>
 
         <form id="user-message-form"
               hx-post="/add-user-message"
+              hx-target="#chat-container"
+              hx-swap="beforeend scroll:#chat-container:bottom"
               hx-on::after-request="htmx.find('input[name=message]').value = ''"
-              {# Notes:
-                    - We use the htmx's JS API & hx-on attribute to clear the input after request finishes.
-                        It's local & readable. Isn't that cool?
-
-                    - Forms automatically include any children <input> elements with a name attribute in the POST request.
-                        We don't need to use hx-include.
-
-                 References:
-                     hx-on - https://htmx.org/attributes/hx-on#hx-on-recommended
-                     htmx.find() - https://htmx.org/api/#find #}
         >
             <ChatInput name="message" required />
         </form>
 
-        <input id="trigger-assistant" type="hidden"
-               hx-post="/add-assistant-message"
-               hx-trigger="htmx:afterRequest from:#user-message-form" />
+        <div id="trigger-assistant"
+             hx-trigger="addAssistantMessage from:body"
+             hx-post="/add-assistant-message"
+             hx-target="#chat-container"
+             hx-swap="beforeend scroll:#chat-container:bottom"
+        />
 
-    </div>
+    </div> <!-- End of Chat -->
+
 </BaseLayout>

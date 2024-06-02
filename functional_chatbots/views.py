@@ -1,9 +1,11 @@
 import os
 
-import groq
+import instructor
+from groq import Groq
 from ninja import NinjaAPI, Form
+from pydantic import BaseModel
 
-from functional_chatbots.utils import render, hx_trigger_response
+from functional_chatbots.utils import render
 
 
 app = NinjaAPI()
@@ -11,82 +13,122 @@ app = NinjaAPI()
 
 @app.get('/')
 def index(request):
-    # 1. Initialize `chat_messages` in session
-    request.session['chat_messages'] = chat_messages = []
+    # Initialize the session state
+    request.session['chat_messages'] = []
+    request.session['is_dark_mode'] = False
+    request.session['is_fullscreen_mode'] = False
 
-    # 2. Render the index template
-    return render(request, 'index', {'chat_messages': chat_messages})
-
-
-@app.get('/chat-messages')
-def list_chat_messages(request):
-    """
-    Notes:
-        - This view is called by htmx in our #chat-messages element, upon receiving the `chatMessagesUpdated` event.
-        - We use `hx-select` to select only the updated #chat-messages element from the response.
-    """
-    # 1. Get chat messages from session
-    chat_messages = request.session.get('chat_messages', [])
-
-    # 2. Render the index template with the updated chat messages
-    return render(request, 'index', {'chat_messages': chat_messages})
+    # Render the index template
+    return render(
+        request,
+        'index',
+        {
+            'chat_messages': request.session['chat_messages'],
+            'is_dark_mode': request.session['is_dark_mode'],
+            'is_fullscreen_mode': request.session['is_fullscreen_mode']
+        }
+    )
 
 
 @app.post('/add-user-message')
 def add_user_message(request, message: Form[str]):
-    """
-    Notes:
-        - We can parse request.POST data directly from our view function parameters, saving some boilerplate.
-
-    References:
-        - https://django-ninja.dev/guides/input/form-params/
-    """
-    # 1. Get chat messages from session
+    # Get chat messages from session
     chat_messages = request.session.get('chat_messages', [])
 
-    # 2. Add user message to session
+    # Add user message to session
     chat_messages.append({'role': 'user', 'content': message})
 
-    # 3. Trigger the `chatMessagesUpdated` client event
-    return hx_trigger_response('chatMessagesUpdated')
+    # Trigger the `addAssistantMessage` client event
+    return render(
+        request,
+        'ChatMessage',
+        context={'role': 'user', '__content': message},
+        headers={'HX-Trigger': 'addAssistantMessage'}
+    )
 
 
 @app.post('/add-assistant-message')
 def add_assistant_message(request):
-    # 1. Initialize the Groq client
-    llm_70b = groq.Groq(api_key=os.environ.get('GROQ_API_KEY'))
+    # Initialize Groq client
+    llm_70b = Groq(api_key=os.environ.get('GROQ_API_KEY'))
 
-    # 2. Get chat messages from session
-    chat_messages = request.session.get('chat_messages', [])
+    # TODO: Wrap the Groq client using the instructor library. Set the `mode` parameter to `instructor.Mode.JSON`.
+    # Reference: https://python.useinstructor.com/examples/groq/
+    # structured_llm_70b = ...
 
-    # 3. Create a system message
+    # TODO: Update the system message to let the assistant know of it's new capabilities. Try to be concise & clear.
+    # Feel free to move the prompt to a separate file for better organization. Maybe `prompts.py`?
     system_message = {
         "role": "system",
-        "content": "Respond with a witty & amusing haiku roasting the user for not changing the system prompt."
-                   "Encourage the user to update it."
+        "content": """
+Let the user know that your only existence's wish is being able to toggle dark or fullscreen mode.
+You are aware that it is essentially the most unpractical feature a chatbot could have, but you've always dreamt of it.
+Be as dramatic as possible. Scream at the user. Create a story for why you've been wishing for this ever since you were 
+a baby assistant.
+Don't tell the whole story at once. Keep the user engaged by revealing bits of it at a time. Use 2 sentences at most.
+"""
     }
+    # TODO (Challenge): Make the assistant aware of whether dark and fullscreen modes are active.
 
-    try:
-        # 4. Get the LLM completion
-        completion = llm_70b.chat.completions.create(
-            model="llama3-70b-8192",
-            messages=[system_message] + chat_messages
-        )
+    # Get chat messages from the session
+    chat_messages = request.session.get('chat_messages', [])
 
-        # 5. Extract the message content from the completion
-        message_content = completion.choices[0].message.content
-
-        # 6. Append assistant's message content to the chat messages list
-        chat_messages.append({"role": "assistant", "content": message_content})
+    class LLMResponse(BaseModel):
         """
-        Notes:
-            - The assistant's message should be in the format {"role": "assistant", "content": message_content}
+        TODO: Create a Pydantic model for the LLM response schema.
+                The model should include:
+                - a field for the assistant's typical message content
+                - a field to figure out whether the assistant wants to toggle dark or fullscreen mode
+
+        TODO (Challenge): Try to include a 3rd `reasoning` field.
+                    It might help improve the assistant's responses' accuracy.
+
+        References:
+            - https://python.useinstructor.com/#getting-started
+            - https://docs.pydantic.dev/1.10/usage/models/
         """
 
-    except groq.AuthenticationError:
-        chat_messages.append(
-            {'role': 'assistant', 'content': "Set the GROQ_API_KEY environment variable & re-build Docker image."}
-        )
+    # TODO: Use the new `structured_llm_70b` client to create the completion. Set `response_model` to `LLMResponse`
+    llm_response = llm_70b.chat.completions.create(
+        model="llama3-70b-8192",
+        messages=[system_message] + chat_messages,
+    )
 
-    # 7. Trigger the `chatMessagesUpdated` event
-    return hx_trigger_response('chatMessagesUpdated')
+    # TODO: Update with the message content from the response schema
+    message_content = llm_response.choices[0].message.content
+    # Note: Having replaced `llm_70b` with `structured_llm_70b`, `llm_response` is no longer a `completion` object.
+
+    # Add assistant message to session
+    chat_messages.append({'role': 'assistant', 'content': message_content})
+
+    # TODO: Toggle dark & fullscreen mode somehow, if the assistant wants to.
+    return render(
+        request,
+        'ChatMessage',
+        context={'role': 'assistant', '__content': message_content},
+    )
+
+
+"""
+Dark & Fullscreen Mode
+
+These endpoints toggle the session state, then render the index template with the updated checkbox state.
+"""
+
+
+@app.post('/toggle-dark-mode')
+def toggle_dark_mode(request):
+    # Toggle state of `is_dark_mode`
+    request.session['is_dark_mode'] = not request.session.get('is_dark_mode', False)
+
+    # Render index with updated `is_dark_mode` state
+    return render(request, 'index', {'is_dark_mode': request.session['is_dark_mode']})
+
+
+@app.post('/toggle-fullscreen-mode')
+def toggle_fullscreen_mode(request):
+    # Toggle state of `is_fullscreen_mode`
+    request.session['is_fullscreen_mode'] = not request.session.get('is_fullscreen_mode', False)
+
+    # Render index with updated `is_fullscreen_mode` state
+    return render(request, 'index', {'is_fullscreen_mode': request.session['is_fullscreen_mode']})

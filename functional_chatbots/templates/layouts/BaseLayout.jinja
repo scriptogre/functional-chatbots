@@ -16,6 +16,23 @@
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Custom TailwindCSS Configuration -->
+    <script>
+        tailwind.config = {
+            // Modify TailwindCSS's dark mode strategy
+            // Apply `dark:` classes when DOM has an input[name="is_dark_mode"] that is checked
+            darkMode: ['variant', 'html:has(input[name="is_dark_mode"]:checked) &'],
+
+            // Add a custom `fullscreen:` variant
+            plugins: [
+                function({ addVariant }) {
+                    // Apply `fullscreen:` classes when DOM has an input[name="is_fullscreen_mode"] that is checked
+                    addVariant('fullscreen', 'html:has(input[name="is_fullscreen_mode"]:checked) &')
+                }
+            ],
+        }
+    </script>
+
     <!-- Enables animations with the `[animation:fade_0.5s_both]` class -->
     <style type="text/tailwindcss">
         @keyframes fade {
@@ -37,10 +54,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 
-<body class="font-['Barlow'] text-neutral-800 bg-gradient-to-br from-neutral-100 to-neutral-300">
+<body class="font-['Barlow'] text-neutral-800 dark:text-neutral-100">
+
+<!-- Backgrounds as separate elements (workaround to enable smooth gradient transitions) -->
+<div class="*:fixed *:inset-0 *:transition-opacity *:duration-[250ms]">
+    <div id="background-dark" class="opacity-0 dark:opacity-100 bg-[linear-gradient(175deg,rgb(18,23,24)_50%,rgb(29,38,49)_100%)]"></div>
+    <div id="background-light" class="opacity-100 dark:opacity-0 bg-gradient-to-br from-neutral-100 to-neutral-300"></div>
+</div>
 
 <!-- Main Content -->
-<main class="flex justify-center items-center h-screen pt-8 pb-14 px-6 z-10 [animation:fade_0.5s_both]">
+<main class="flex flex-col justify-center items-center h-screen py-14 px-6 z-10 [animation:fade_0.5s_both]">
+
+    <!-- Workshop Progress -->
+    <div class="fixed top-4 left-6 sm:left-1/2 sm:-translate-x-1/2 h-fit max-h-[80px] overflow-hidden transition-[max-height,margin-bottom] duration-[250ms] flex flex-col sm:items-center justify-center mb-3 sm:mb-6">
+        <a href="https://github.com/scriptogre/functional-chatbots/tree/3-client-events-task" target="_blank" class="sm:text-xl transition-[margin-bottom] duration-[250ms] mb-1.5 sm:mb-3">
+            <code>3-client-events-task 📌</code>
+        </a>
+    </div>
 
     {# The equivalent to {% block content %} #}
     {{ content }}
@@ -48,15 +78,15 @@
 </main>
 
 <!-- Footer -->
-<footer class="flex items-center fixed right-1/2 translate-x-1/2 bottom-4 gap-2">
+<footer class="flex items-center fixed right-1/2 translate-x-1/2 bottom-4 gap-2 sm:fullscreen:right-6 sm:fullscreen:translate-x-0 transition-[bottom,right,transform] duration-[250ms]">
 
     <!-- Github -->
-    <a href="https://github.com/scriptogre" target="_blank" class="p-1 text-neutral-500 hover:text-neutral-600 transition-colors" aria-label="Github">
+    <a href="https://github.com/scriptogre" target="_blank" class="p-1 text-neutral-500 hover:text-neutral-600 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors duration-[250ms]" aria-label="Github">
         <iconify-icon icon="akar-icons:github-fill" class="translate-y-1"></iconify-icon>
     </a>
 
     <!-- Linkedin -->
-    <a href="https://www.linkedin.com/in/christian-tanul-94333a17a/" target="_blank" class="p-1 text-neutral-500 hover:text-neutral-600 transition-colors" aria-label="LinkedIn">
+    <a href="https://www.linkedin.com/in/christian-tanul-94333a17a/" target="_blank" class="p-1 text-neutral-500 hover:text-neutral-600 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors duration-[250ms]" aria-label="LinkedIn">
         <iconify-icon icon="akar-icons:linkedin-fill" class="translate-y-1"></iconify-icon>
     </a>
 
