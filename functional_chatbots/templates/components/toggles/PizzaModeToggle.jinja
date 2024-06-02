@@ -1,0 +1,11 @@
+{#def name, checked #}
+<label {{ attrs.render(class="group inline-flex p-1 text-lg cursor-pointer text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 duration-200") }}>
+
+    <input name="{{ name }}" class="hidden" type="checkbox" autocomplete="off" {% if checked %}checked{% endif %} />
+
+    <!-- Pizza Icon (Colored) - Pizza Mode Enabled -->
+    <iconify-icon icon="fluent-emoji-flat:pizza" class="hidden group-has-[:checked]:block"></iconify-icon>
+
+    <!-- Pizza Icon (Outlined) - Fullscreen Mode Disabled -->
+    <iconify-icon icon="fluent-emoji-high-contrast:pizza" class="group-has-[:checked]:hidden"></iconify-icon>
+</label>

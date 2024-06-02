@@ -6,40 +6,36 @@ from groq import Groq
 from ninja import NinjaAPI, Form
 from pydantic import BaseModel
 
-from functional_chatbots.prompts import SYSTEM_PROMPT, DARK_MODE_ON_INSTRUCTIONS, FULLSCREEN_MODE_ON_INSTRUCTIONS, \
-    DARK_MODE_OFF_INSTRUCTIONS, FULLSCREEN_MODE_OFF_INSTRUCTIONS
-from functional_chatbots.utils import render, hx_trigger_response
-
+from functional_chatbots.pizza_orders.models import PizzaOrder
+from functional_chatbots.prompts import SYSTEM_PROMPT, generate_contextual_information
+from functional_chatbots.utils import render
+from functional_chatbots.pizza_orders.views import router as pizza_orders_router
 
 app = NinjaAPI()
+app.add_router('', pizza_orders_router)
 
 
 @app.get('/')
 def index(request):
-    # Initialize the session state
-    request.session['chat_messages'] = []
-    request.session['is_dark_mode'] = False
-    request.session['is_fullscreen_mode'] = False
+    # Start fresh on page load
+    request.session['chat_messages'] = chat_messages = []
+    request.session['is_dark_mode'] = is_dark_mode = False
+    request.session['is_fullscreen_mode'] = is_fullscreen_mode = False
+    request.session['is_pizza_mode'] = is_pizza_mode = False
+    PizzaOrder.objects.all().delete()
 
     # Render the index template
     return render(
         request,
         'index',
         {
-            'chat_messages': request.session['chat_messages'],
-            'is_dark_mode': request.session['is_dark_mode'],
-            'is_fullscreen_mode': request.session['is_fullscreen_mode']
+            'chat_messages': chat_messages,
+            'is_dark_mode': is_dark_mode,
+            'is_fullscreen_mode': is_fullscreen_mode,
+            'is_pizza_mode': is_pizza_mode,
+            'pizza_orders': []
         }
     )
-
-
-@app.get('/chat-messages')
-def list_chat_messages(request):
-    # Get chat messages from session
-    chat_messages = request.session.get('chat_messages', [])
-
-    # Render the index template with the updated chat messages
-    return render(request, 'index', {'chat_messages': chat_messages})
 
 
 @app.post('/add-user-message')
@@ -50,8 +46,13 @@ def add_user_message(request, message: Form[str]):
     # Add user message to session
     chat_messages.append({'role': 'user', 'content': message})
 
-    # Trigger the `chatMessagesUpdated` client event
-    return hx_trigger_response('chatMessagesUpdated')
+    # Return the response
+    return render(
+        request,
+        'ChatMessage',
+        context={'role': 'user', '__content': message},
+        headers={'HX-Trigger': 'generateAssistantMessage'}
+    )
 
 
 @app.post('/add-assistant-message')
@@ -62,18 +63,15 @@ def add_assistant_message(request):
     # Apply instructor to LLM client
     structured_llm_70b = instructor.from_groq(llm_70b, mode=instructor.Mode.JSON)
 
-    # Get state of dark & fullscreen mode
+    # Get client state (dark & fullscreen mode), and server state (pizza orders)
     is_dark_mode = request.session.get('is_dark_mode', False)
     is_fullscreen_mode = request.session.get('is_fullscreen_mode', False)
+    is_pizza_mode = request.session.get('is_pizza_mode', False)
 
     # Add instructions based on these states
     system_message = {
         "role": "system",
-        "content": (
-                SYSTEM_PROMPT
-                + (DARK_MODE_ON_INSTRUCTIONS if is_dark_mode else DARK_MODE_OFF_INSTRUCTIONS)
-                + (FULLSCREEN_MODE_ON_INSTRUCTIONS if is_fullscreen_mode else FULLSCREEN_MODE_OFF_INSTRUCTIONS)
-        )
+        "content": SYSTEM_PROMPT + generate_contextual_information(is_dark_mode, is_fullscreen_mode, is_pizza_mode)
     }
 
     # Get chat messages
@@ -82,45 +80,56 @@ def add_assistant_message(request):
     # Define LLM response schema
     class LLMResponse(BaseModel):
         reasoning: str
-        client_events: List[Literal["toggleDarkMode", "toggleFullscreenMode"]] = []
+        # TODO: server_functions: ...
+        client_events: List[Literal["toggleDarkMode", "toggleFullscreenMode", "togglePizzaMode", "pizzaOrdersUpdated"]] = []
         message: str
 
     # Generate LLM response with defined schema
     llm_response = structured_llm_70b.chat.completions.create(
-        model="llama3-70b-8192",
-        messages=[system_message] + chat_messages,
-        response_model=LLMResponse
+        model="llama3-70b-8192", messages=[system_message] + chat_messages, response_model=LLMResponse
     )
 
     # Add assistant message to session
     chat_messages.append({'role': 'assistant', 'content': llm_response.json()})
 
-    # Join chatMessagesUpdated event with events from LLM response (if any)
-    hx_triggers = ['chatMessagesUpdated'] + llm_response.client_events
+    # Handle the actual calling of the functions
+    # ...
 
-    return hx_trigger_response(hx_triggers)
+    return render(
+        request,
+        'ChatMessage',
+        {'role': 'assistant', '__content': llm_response.message},
+        {'HX-Trigger': ', '.join(llm_response.client_events)}
+    )
 
 
 """
-Client Actions: Dark Mode and Fullscreen Mode
-
-These endpoints toggle the session state, then render the index template with the updated toggle state.
+Dark Mode and Fullscreen Mode
 """
 
 
 @app.post('/toggle-dark-mode')
 def toggle_dark_mode(request):
     # Toggle state of `is_dark_mode`
-    request.session['is_dark_mode'] = not request.session.get('is_dark_mode', False)
+    request.session['is_dark_mode'] = is_dark_mode = not request.session.get('is_dark_mode', False)
 
     # Render index with updated `is_dark_mode` state
-    return render(request, 'index', {'is_dark_mode': request.session['is_dark_mode']})
+    return render(request, 'index', {'is_dark_mode': is_dark_mode})
 
 
 @app.post('/toggle-fullscreen-mode')
 def toggle_fullscreen_mode(request):
     # Toggle state of `is_fullscreen_mode`
-    request.session['is_fullscreen_mode'] = not request.session.get('is_fullscreen_mode', False)
+    request.session['is_fullscreen_mode'] = is_fullscreen_mode = not request.session.get('is_fullscreen_mode', False)
 
     # Render index with updated `is_fullscreen_mode` state
-    return render(request, 'index', {'is_fullscreen_mode': request.session['is_fullscreen_mode']})
+    return render(request, 'index', {'is_fullscreen_mode': is_fullscreen_mode})
+
+
+@app.post('/toggle-pizza-mode')
+def toggle_pizza_mode(request):
+    # Toggle state of `is_pizza_mode`
+    request.session['is_pizza_mode'] = is_pizza_mode = not request.session.get('is_pizza_mode', False)
+
+    # Render index with updated `is_pizza_mode` state
+    return render(request, 'index', {'is_pizza_mode': is_pizza_mode})

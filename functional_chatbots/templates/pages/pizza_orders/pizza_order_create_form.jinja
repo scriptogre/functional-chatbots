@@ -1,0 +1,42 @@
+{#def errors=[] #}
+
+<Modal>
+    <Card class="px-8 py-6">
+        <form hx-post="/pizza-orders/add"
+              hx-target="body"
+              hx-swap="beforeend"
+              hx-on::after-request="htmx.find('dialog').close()">
+
+            {% if errors %}
+                <ul class="mb-3 text-center space-y-1.5">
+                    {% for err in errors %}
+                        <li class="text-sm text-red-500">
+                            {{ err.msg }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <!-- Pizza Name (Cheese, Pepperoni, Vegetarian) -->
+            <p class="text-center font-[500] mb-3">1. Select pizza:</p>
+            <div class="flex justify-center items-center gap-2 mb-6">
+                {% for pizza_name, icon in [("cheese", "ph:cheese-fill"), ("pepperoni", "mdi:spicy"), ("vegetarian", "ph:plant-fill")] %}
+                    {% set label = pizza_name|capitalize %}
+                    <RadioLabel name="name" value={pizza_name} label={label} icon={icon} checked={False} />
+                {% endfor %}
+            </div>
+
+            <!-- Pizza Size (Small, Medium, Large) -->
+            <p class="text-center font-[500] mb-3">2. Select size:</p>
+            <div class="flex justify-center items-center gap-1.5 mb-6">
+                {% for size in ["small", "medium", "large"] %}
+                    <RadioLabel name="size" value={size} label={size|capitalize} icon={"mdi:size-"~size|first} checked={False} />
+                {% endfor %}
+            </div>
+
+            <Button type="submit" class="w-full dark:text-black bg-orange-500 hover:bg-orange-600 dark:bg-amber-500 dark:hover:bg-amber-400">
+                Create
+            </Button>
+        </form>
+    </Card>
+</Modal>

@@ -1,0 +1,14 @@
+{#def role="assistant" #}
+
+<div {{ attrs.render(class="chat-message inline-flex items-end mb-4 gap-3 sm:fullscreen:mb-6" + (" flex-row" if role == "assistant" else " flex-row-reverse") ) }}>
+
+    {% if role == 'assistant' %}
+        <!-- Assistant Avatar -->
+        <img class="size-8 rounded-full object-cover transition-transform duration-[250ms] sm:fullscreen:scale-125" src="/static/assistant-avatar.webp" alt="Assistant Avatar" />
+    {% endif %}
+
+    <!-- Content -->
+    <div class="py-3 px-4 w-fit max-w-sm text-sm hyphens-auto whitespace-pre-wrap rounded-xl shadow transition-[background-color,font-size,line-height,padding] duration-[250ms] sm:fullscreen:py-4 sm:fullscreen:px-5 sm:fullscreen:text-lg sm:fullscreen:max-w-3xl sm:fullscreen:rounded-2xl {% if role == 'assistant' %}bg-neutral-200 dark:bg-[#212626] rounded-bl-none sm:fullscreen:rounded-bl-none{% else %}bg-orange-300 dark:bg-amber-900 rounded-br-none sm:fullscreen:rounded-br-none{% endif %}">
+        {{- content -}}
+    </div>
+</div>

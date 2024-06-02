@@ -1,0 +1,57 @@
+{#def pizza_order, errors=[] #}
+
+<Modal>
+    <Card class="px-8 py-6">
+        <form hx-post="/pizza-orders/{{ pizza_order.id }}/update"
+              hx-on::after-request="htmx.find('dialog').close()">
+
+            {% if errors %}
+                <ul class="mb-3 text-center space-y-1.5">
+                    {% for err in errors %}
+                        <li class="text-sm text-red-500">
+                            {{ err.msg }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <!-- Pizza Name (Cheese, Pepperoni, Vegetarian) -->
+            <p class="text-center font-[500] mb-3">1. Select pizza:</p>
+            <div class="flex justify-center items-center gap-2 mb-6">
+                {% for pizza_name, icon in [("cheese", "ph:cheese-fill"), ("pepperoni", "mdi:spicy"), ("vegetarian", "ph:plant-fill")] %}
+                    {% set checked = pizza_order.name == pizza_name %}
+                    {% set label = pizza_name|capitalize %}
+                    <RadioLabel name="name" value={pizza_name} checked={checked}
+                                label={label} icon={icon}
+                    />
+                {% endfor %}
+            </div>
+
+            <!-- Pizza Size (Small, Medium, Large) -->
+            <p class="text-center font-[500] mb-3">2. Select size:</p>
+            <div class="flex justify-center items-center gap-1.5 mb-6">
+                {% for size in ["small", "medium", "large"] %}
+                    {% set icon = "mdi:size-" ~ size|first %}
+                    {% set checked = pizza_order.size == size %}
+                    <RadioLabel name="size" value={size} checked={checked}
+                                label={size|capitalize} icon={icon}
+                    />
+                {% endfor %}
+            </div>
+
+            <div class="flex justify-end items-center gap-2">
+
+                <Button class="w-1/3 hover:text-white text-red-500 bg-transparent hover:bg-red-500 dark:hover:bg-red-600"
+                        hx-get={"/pizza-orders/"~pizza_order.id~"/delete"}
+                        hx-target="body"
+                        hx-swap="beforeend"
+                >
+                    Delete
+                </Button>
+                <Button autofocus type="submit" class="w-1/3 bg-orange-500 hover:bg-orange-600 dark:bg-amber-500 dark:hover:bg-amber-400 text-white dark:text-black">
+                    Update
+                </Button>
+            </div>
+        </form>
+    </Card>
+</Modal>

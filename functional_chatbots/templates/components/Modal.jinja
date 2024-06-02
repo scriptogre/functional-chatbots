@@ -1,0 +1,9 @@
+<dialog class="[animation:fade_0.2s_both] bg-transparent text-neutral-800 dark:text-neutral-300 backdrop:backdrop-blur-lg backdrop:bg-black/50"
+
+        hx-on::load="this.showModal()"
+        hx-on:close="this.remove()">
+
+    {{ content }}
+
+    <form method="dialog" class="fixed inset-0 cursor-pointer -z-10" hx-on:click="this.submit()"></form>
+</dialog>

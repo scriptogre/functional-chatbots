@@ -1,0 +1,43 @@
+{#def pizza_order #}
+
+<div {{ attrs.render(class="pizza-order group/order flex items-center justify-between mb-2 cursor-pointer hover:bg-neutral-700/10 dark:hover:bg-neutral-100/10 p-4 pe-6 rounded-2xl select-none [animation:fade_0.5s_both] transition-colors duration-[250ms]") }}>
+
+    <div class="flex items-center">
+
+        <span class="relative inline-grid place-items-center">
+            <!-- Pizza Type Icon -->
+            <iconify-icon icon="game-icons:full-pizza" class="size-5 sm:fullscreen:size-7 text-orange-500 dark:text-amber-500" height="none"
+            ></iconify-icon>
+            <!-- Loading Pizza Icon (Top right, shown when countdown is not 0) -->
+            <iconify-icon icon="mingcute:loading-fill" class="animate-spin size-2.5 sm:fullscreen:size-3 absolute -top-2 -right-1.5 transition-[color,opacity] duration-[250ms] text-orange-500 dark:text-amber-500 group-has-[[style*='--seconds-left:_0']]/order:opacity-0 sm:fullscreen:-top-2.5" height="none"></iconify-icon>
+            <!-- Finished Pizza Icon (Top right, shown when countdown reaches 0) -->
+            <iconify-icon icon="bi:check" class="absolute -top-2.5 -right-2.5 text-green-700 dark:text-green-600 transition-[color,opacity] duration-[250ms] invisible opacity-0 group-has-[[style*='--seconds-left:_0']]/order:visible group-has-[[style*='--seconds-left:_0']]/order:opacity-100"></iconify-icon>
+
+            <!-- Pizza Type Icon (Bottom right) -->
+            <iconify-icon {% if pizza_order.name == 'cheese' %}
+                          icon="ph:cheese-fill"
+                    {% elif pizza_order.name == 'pepperoni' %}
+                          icon="mdi:spicy"
+                    {% elif pizza_order.name == 'vegetarian' %}
+                          icon="ph:plant-fill"
+                    {% endif %} height="none" class="absolute -bottom-2 -right-1.5 size-2.5 text-orange-500 dark:text-amber-500"></iconify-icon>
+        </span>
+
+        <!-- Pizza Name & Size -->
+        <div class="flex flex-col mx-3">
+            <span class="font-[500]">Pizza Order #{{ pizza_order.id }}</span>
+            <span class="text-xs sm:text-sm">{{ pizza_order.name|title }}, {{ pizza_order.size|title }}</span>
+        </div>
+    </div>
+
+    <div class="inline-flex">
+        <!-- Countdown Timer -->
+        <PizzaOrderCountdown seconds_left={pizza_order.seconds_left} class="has-[[style*='--seconds-left:_0']]:hidden" />
+
+        <!-- Ready Text (shown when countdown reaches 0) -->
+        <span class="hidden group-has-[[style*='--seconds-left:_0']]/order:block text-green-700 dark:text-green-600">
+            Ready
+        </span>
+    </div>
+
+</div>

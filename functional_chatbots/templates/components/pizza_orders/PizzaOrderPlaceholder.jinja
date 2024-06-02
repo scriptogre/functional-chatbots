@@ -1,0 +1,16 @@
+<button {{ attrs.render(class="absolute inset-0 size-full group relative block rounded-2xl border-2 border-dashed border-neutral-300 dark:border-neutral-500 text-center hover:border-neutral-400 focus:border-orange-500 dark:focus:border-amber-500 duration-200 whitespace-nowrap transition-colors duration-[250ms]") }} type="button">
+
+    <!-- Pizza & Plus Icon -->
+    <span class="mx-auto relative text-neutral-400 group-hover:text-orange-500 group-focus:text-orange-500 dark:group-hover:text-amber-500 dark:group-focus:text-amber-500 transition-[color,transform] sm:fullscreen:scale-125 duration-[250ms]">
+        <iconify-icon icon="game-icons:full-pizza" class="size-12" height="none"></iconify-icon>
+        <iconify-icon icon="ic:baseline-plus" class="size-5 absolute -top-10 -right-2" height="none"></iconify-icon>
+    </span>
+
+    <!-- Text -->
+    <span class="mt-2 block text-sm font-[500] transition-transform sm:fullscreen:scale-125 duration-[250ms]">
+        Place a new pizza order
+    </span>
+
+    {{ content }}
+
+</button>
