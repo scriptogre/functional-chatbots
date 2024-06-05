@@ -207,8 +207,10 @@ This was my first workshop.
 I'd love to her your thoughts. I'd appreciate to know whether I should pursue this further or stop
 wasting people's time.
 
-## Scan this big-ass QR code
+## Scan this QR code to provide feedback
 
 ...please 👉👈
 
+<a href="https://docs.google.com/forms/d/e/1FAIpQLSfgmNqBbr7Uxp7Xji-y_JRYibKdQune3mM0JUkcpj54yww0GQ/viewform" target="_blank">
  <img src="https://cdn.jsdelivr.net/gh/scriptogre/functional-chatbots-assets/feedback-form-qr-code.png" alt="Feedback Form QR Code" width="500"/>
+</a>
