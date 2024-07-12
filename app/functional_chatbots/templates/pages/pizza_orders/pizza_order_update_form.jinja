@@ -21,8 +21,8 @@
                 {% for pizza_name, icon in [("cheese", "ph:cheese-fill"), ("pepperoni", "mdi:spicy"), ("vegetarian", "ph:plant-fill")] %}
                     {% set checked = pizza_order.name == pizza_name %}
                     {% set label = pizza_name|capitalize %}
-                    <RadioLabel name="name" value={pizza_name} checked={checked}
-                                label={label} icon={icon}
+                    <RadioLabel name="name" value={{ pizza_name }} checked={{ checked }}
+                                label={{ label }} icon={{ icon }}
                     />
                 {% endfor %}
             </div>
@@ -33,8 +33,8 @@
                 {% for size in ["small", "medium", "large"] %}
                     {% set icon = "mdi:size-" ~ size|first %}
                     {% set checked = pizza_order.size == size %}
-                    <RadioLabel name="size" value={size} checked={checked}
-                                label={size|capitalize} icon={icon}
+                    <RadioLabel name="size" value={{ size }} checked={{ checked }}
+                                label={{ size|capitalize }} icon={{ icon }}
                     />
                 {% endfor %}
             </div>
@@ -42,7 +42,7 @@
             <div class="flex justify-end items-center gap-2">
 
                 <Button class="w-1/3 hover:text-white text-red-500 bg-transparent hover:bg-red-500 dark:hover:bg-red-600"
-                        hx-get={"/pizza-orders/"~pizza_order.id~"/delete"}
+                        hx-get={{ "/pizza-orders/"~pizza_order.id~"/delete" }}
                         hx-target="body"
                         hx-swap="beforeend"
                 >

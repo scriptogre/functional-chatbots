@@ -16,7 +16,7 @@
             </form>
 
             <Button class="w-1/3 bg-red-500 hover:bg-red-600 dark:bg-red-500 dark:hover:bg-red-400 text-white dark:text-black"
-                    hx-post={"/pizza-orders/"~order_id~"/delete"}
+                    hx-post={{ "/pizza-orders/"~order_id~"/delete" }}
                     hx-on--after-request="htmx.find('dialog').close()"
             >
                 Yes

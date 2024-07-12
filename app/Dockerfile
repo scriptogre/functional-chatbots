@@ -3,6 +3,7 @@ FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV DJANGO_SETTINGS_MODULE=config.settings
 
 # Set the working directory in the container
 WORKDIR /code
@@ -21,3 +22,8 @@ RUN python manage.py makemigrations sessions
 RUN python manage.py makemigrations pizza_orders
 RUN python manage.py migrate sessions
 RUN python manage.py migrate pizza_orders
+
+# Expose the application on port 8000
+EXPOSE 8000
+
+CMD python manage.py runserver 0.0.0.0:8000

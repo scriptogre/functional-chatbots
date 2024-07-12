@@ -32,7 +32,7 @@
 
     <div class="inline-flex">
         <!-- Countdown Timer -->
-        <PizzaOrderCountdown seconds_left={pizza_order.seconds_left} class="has-[[style*='--seconds-left:_0']]:hidden" />
+        <PizzaOrderCountdown seconds_left={{ pizza_order.seconds_left }} class="has-[[style*='--seconds-left:_0']]:hidden" />
 
         <!-- Ready Text (shown when countdown reaches 0) -->
         <span class="hidden group-has-[[style*='--seconds-left:_0']]/order:block text-green-700 dark:text-green-600">

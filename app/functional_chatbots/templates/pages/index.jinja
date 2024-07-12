@@ -12,21 +12,21 @@
     <!-- Toggles (Dark Mode, Fullscreen Mode, Pizza Mode) -->
     <div class="absolute right-5 top-4 flex items-center gap-2">
 
-        <DarkModeToggle id="dark-mode-toggle" name="is_dark_mode" checked={is_dark_mode}
+        <DarkModeToggle checked={{ is_dark_mode }} id="dark-mode-toggle" name="is_dark_mode"
                         hx-post="/toggle-dark-mode"
                         hx-trigger="click, toggleDarkMode from:body delay:100ms"
                         hx-select="#dark-mode-toggle"
                         hx-swap="outerHTML"
         />
 
-        <FullscreenModeToggle id="fullscreen-mode-toggle" name="is_fullscreen_mode" checked={is_fullscreen_mode} class="hidden sm:inline-flex"
+        <FullscreenModeToggle checked={{ is_fullscreen_mode }} id="fullscreen-mode-toggle" name="is_fullscreen_mode" class="hidden sm:inline-flex"
                               hx-post="/toggle-fullscreen-mode"
                               hx-trigger="click, toggleFullscreenMode from:body delay:200ms"
                               hx-select="#fullscreen-mode-toggle"
                               hx-swap="outerHTML"
         />
 
-        <PizzaModeToggle id="pizza-mode-toggle" name="is_pizza_mode" checked={is_pizza_mode}
+        <PizzaModeToggle checked={{ is_pizza_mode }} id="pizza-mode-toggle" name="is_pizza_mode" checked={is_pizza_mode}
                          hx-post="/toggle-pizza-mode"
                          hx-trigger="click, togglePizzaMode from:body delay:300ms"
                          hx-select="#pizza-mode-toggle"
@@ -48,8 +48,8 @@
                  hx-disinherit="hx-select"
             >
                 {% for order in pizza_orders %}
-                    <PizzaOrder pizza_order={order}
-                                hx-get={"/pizza-orders/"~order.id~"/update"}
+                    <PizzaOrder pizza_order={{ order }}
+                                hx-get={{ "/pizza-orders/"~order.id~"/update" }}
                                 hx-target="body"
                                 hx-swap="beforeend"
                     />

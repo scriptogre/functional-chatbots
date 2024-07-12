@@ -1,0 +1,174 @@
+{# This is an equivalent to base.html #}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Functional Chatbots | DjangoCon Europe 2024 | Christian Tanul</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+
+    <!-- HTMX -->
+    <script defer src="https://unpkg.com/htmx.org"></script>
+
+    <!-- Hyperscript -->
+    <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom TailwindCSS Configuration -->
+    <script>
+        tailwind.config = {
+            // Modify TailwindCSS's dark mode strategy
+            // Apply `dark:` classes when DOM has an input[name="is_dark_mode"] that is checked
+            darkMode: ['variant', 'html:has(input[name="is_dark_mode"]:checked) &'],
+
+            // Add a custom `fullscreen:` variant
+            plugins: [
+                function({ addVariant }) {
+                    // Apply `fullscreen:` classes when DOM has an input[name="is_fullscreen_mode"] that is checked
+                    addVariant('fullscreen', 'html:has(input[name="is_fullscreen_mode"]:checked) &')
+                    // Apply `pizza:` classes when DOM has an input[name="is_pizza_mode"] that is checked
+                    addVariant('pizza', 'html:has(input[name="is_pizza_mode"]:checked) &')
+                }
+            ],
+        }
+    </script>
+
+    <!-- Enables animations with the `[animation:fade_0.5s_both]` class -->
+    <style type="text/tailwindcss">
+        @keyframes fade {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <!-- Iconify Icons (Iconify Web Component) -->
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <!-- To avoid layout shifts before the icons load -->
+    <style> iconify-icon { display: inline-block; width: 1em; height: 1em; } </style>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="font-['Barlow'] text-neutral-800 dark:text-neutral-100">
+
+<!-- Backgrounds as separate elements (workaround to enable smooth gradient transitions) -->
+<div class="*:fixed *:inset-0 *:transition-opacity *:duration-[250ms] *:size-full">
+    <div id="background-dark" class="opacity-0 dark:opacity-100 bg-[linear-gradient(175deg,rgb(18,23,24)_50%,rgb(29,38,49)_100%)]"></div>
+    <div id="background-light" class="opacity-100 dark:opacity-0 bg-gradient-to-br from-neutral-100 to-neutral-300"></div>
+    <video id="background-pizza" src="/static/pizza-footage.webm" class="object-cover opacity-0 pizza:opacity-100 dark:saturate-50 brightness-50 duration-200 after:content-[''] relative after:absolute after:size-full after:opacity-20 after:bg-black" muted autoplay loop></video>
+</div>
+
+<label onkeydown="if (event.key === 'Enter' || event.key === ' ') event.target.click()"
+       tabindex="0"
+       class="absolute left-5 top-3 z-30 size-9 inline-grid place-content-center *:col-start-1 *:row-start-1 rounded-lg cursor-pointer text-neutral-600 dark:text-neutral-300 pizza:text-neutral-300 has-[:checked]:pizza:text-neutral-600 transition-colors duration-200 group hover:dark:text-neutral-50 hover:pizza:text-neutral-50 hover:text-neutral-800">
+    <!-- Input (maintains state) -->
+    <input id="side-nav-toggle" type="checkbox" class="hidden peer">
+    <!-- Icons -->
+    <iconify-icon icon="gg:menu" class="size-5 peer-checked:invisible peer-checked:opacity-0 duration-200 rotate-180 peer-checked:rotate-90" height="unset"></iconify-icon>
+    <iconify-icon icon="gg:close" class="size-5 invisible opacity-0 peer-checked:visible peer-checked:opacity-100 duration-200 peer-checked:-rotate-90" height="unset"></iconify-icon>
+</label>
+
+<!-- Sidenav -->
+<nav class="fixed z-20 top-0 -translate-x-96 [html:has(input#side-nav-toggle:checked)_&]:-translate-x-0 duration-200 ease-out px-8 pb-4 pt-20 border-neutral-400/5 border-r bg-neutral-50 dark:bg-[linear-gradient(175deg,#121718_50%,#1d2631)] font-['Barlow'] tracking-wide h-full max-w-80 sm:max-w-full w-96 overflow-y-auto">
+    <img src="/static/workshop.webp" alt="Workshop" class="rounded-full size-40 object-cover mx-auto">
+
+    <h1 class="text-2xl font-bold text-center mt-6">
+        Functional Chatbots
+    </h1>
+    <p class="text-center leading-7 mt-3">
+        This workshop was presented at DjangoCon Europe 2024 in Vigo, Spain <br/> by
+        <a href="https://linkedin.com/in/tanulchristian" target="_blank" class="ms-1.5 decoration-transparent hover:decoration-neutral-950 hover:dark:decoration-neutral-50 underline underline-offset-2 hover:text-neutral-950 hover:dark:text-white group relative isolate inline-block items-center rounded-lg transition-colors translate-y-[1px]">
+            <iconify-icon icon="mage:linkedin" class="text-[1rem] translate-y-0.5 me-1.5"></iconify-icon><span class="self-baseline font-[500]">Christian Tanul</span>
+        </a>
+    </p>
+
+    <p class="text-center flex flex-col gap-1.5 mt-6 mb-3">
+        <a href="https://github.com/scriptogre/functional-chatbots" target="_blank" class="border border-neutral-950/5 dark:border-neutral-50/5 px-4 py-2 rounded-full hover:text-white hover:bg-neutral-800 dark:hover:text-neutral-800 dark:hover:bg-neutral-50 transition-colors">
+            <iconify-icon icon="akar-icons:github-fill" class="inline-block text-lg translate-y-[3px] me-1.5"></iconify-icon>
+            GitHub repository
+        </a>
+        <a href="https://www.youtube.com/watch?v=jtjMR47AAd8" target="_blank" class="border border-neutral-950/5 dark:border-neutral-50/5 px-4 py-2 rounded-full hover:text-white hover:bg-neutral-800 dark:hover:text-neutral-800 dark:hover:bg-neutral-50 transition-colors ms-2">
+            <iconify-icon icon="akar-icons:youtube-fill" class="inline-block text-lg translate-y-[3px] me-1.5"></iconify-icon>
+            Watch on YouTube
+        </a>
+    </p>
+
+    <hr class="my-6 border-neutral-950/5 dark:border-neutral-50/5">
+
+    <p class="mt-3 text-sm">
+        There are 3 modes: <iconify-icon icon="ri:moon-clear-line" class="inline-block translate-y-0.5 me-0.5"></iconify-icon> dark, <iconify-icon icon="majesticons:maximize" class="inline-block translate-y-0.5 me-0.5"></iconify-icon> fullscreen, and <iconify-icon icon="fluent-emoji-high-contrast:pizza" class="inline-block translate-y-0.5 me-0.5"></iconify-icon> pizza.
+    </p>
+    <p class="mt-3 text-sm">
+        In <iconify-icon icon="fluent-emoji-flat:pizza" class="inline-block translate-y-0.5 me-0.5"></iconify-icon> pizza mode, you can create / update / delete pizza orders.
+    </p>
+
+    <p class="mt-3 text-sm">
+        You can do these manually, or you can let the chatbot do it for you!
+    </p>
+
+    <hr class="my-6 border-neutral-950/5 dark:border-neutral-50/5">
+
+    <p class="text-xl font-bold">
+        Try it out!
+    </p>
+
+    <p class="mt-6 text-sm">
+        1. Say "toggle dark & fullscreen modes" to enable dark & fullscreen modes.
+    </p>
+    <p class="mt-3 text-sm">
+        2. Say "toggle pizza mode" to enable pizza mode.
+    </p>
+    <p class="mt-3 text-sm">
+        3. In pizza mode, manage your pizza orders using commands such as:
+    </p>
+    <ul class="mt-1 text-sm">
+        <li>- "Place a pizza order"</li>
+        <li>- "Update my pizza order"</li>
+        <li>- "Delete my pizza order"</li>
+        <li>- "How many orders do I have?"</li>
+    </ul>
+
+    <hr class="my-6 border-neutral-950/5 dark:border-neutral-50/5">
+
+    <p class="mt-4 text-sm">
+        Note: The state of the application resets when you refresh the page.
+    </p>
+</nav>
+
+<!-- Sidenav Backdrop -->
+<label id="side-nav-backdrop" for="side-nav-toggle" class="fixed z-10 top-0 left-0 invisible opacity-0 [html:has(input#side-nav-toggle:checked)_&]:visible [html:has(input#side-nav-toggle:checked)_&]:opacity-100 transition-opacity bg-black/50 w-screen h-screen cursor-pointer"></label>
+
+<!-- Main Content -->
+<main class="flex flex-col sm:flex-row justify-center items-start sm:items-center h-dvh pb-6 pt-14 sm:pb-14 px-6 z-10 [animation:fade_0.5s_both]">
+
+    {# The equivalent to {% block content %} #}
+    {{ content }}
+
+</main>
+
+<!-- Footer -->
+<footer class="hidden sm:flex items-center fixed right-1/2 translate-x-1/2 bottom-4 gap-2 sm:fullscreen:right-6 sm:fullscreen:translate-x-0 transition-[bottom,right,transform] duration-[250ms]">
+
+    <!-- Github -->
+    <a href="https://github.com/scriptogre" target="_blank" class="p-1 text-neutral-500 hover:text-neutral-600 dark:text-neutral-400 dark:hover:text-neutral-200 pizza:text-neutral-300 hover:pizza:text-neutral-50 transition-colors duration-[250ms]" aria-label="Github">
+        <iconify-icon icon="akar-icons:github-fill" class="translate-y-1"></iconify-icon>
+    </a>
+
+    <!-- Linkedin -->
+    <a href="https://www.linkedin.com/in/christian-tanul-94333a17a/" target="_blank" class="p-1 text-neutral-500 hover:text-neutral-600 dark:text-neutral-400 dark:hover:text-neutral-200 pizza:text-neutral-300 hover:pizza:text-neutral-50 transition-colors duration-[250ms]" aria-label="LinkedIn">
+        <iconify-icon icon="akar-icons:linkedin-fill" class="translate-y-1"></iconify-icon>
+    </a>
+
+</footer>
+</body>
+</html>
