@@ -1,5 +1,5 @@
 import os
-from typing import Literal, List, Union, Tuple
+from typing import List, Union, Tuple, Literal
 
 import instructor
 from groq import Groq
@@ -18,12 +18,16 @@ app.add_router('', pizza_orders_router)
 
 @app.get('/')
 def index(request):
-    # Start fresh on page load
+    # Clear chat messages on page load
     request.session['chat_messages'] = chat_messages = []
-    request.session['is_dark_mode'] = is_dark_mode = False
-    request.session['is_fullscreen_mode'] = is_fullscreen_mode = False
-    request.session['is_pizza_mode'] = is_pizza_mode = False
-    PizzaOrder.objects.all().delete()
+
+    # Get UI state from session
+    is_dark_mode = request.session.get('is_dark_mode', False)
+    is_fullscreen_mode = request.session.get('is_fullscreen_mode', False)
+    is_pizza_mode = request.session.get('is_pizza_mode', False)
+
+    # Get pizza orders of the current session
+    pizza_orders = PizzaOrder.objects.filter(session_key=request.session.session_key)
 
     # Render the index template
     return render(
@@ -34,7 +38,7 @@ def index(request):
             'is_dark_mode': is_dark_mode,
             'is_fullscreen_mode': is_fullscreen_mode,
             'is_pizza_mode': is_pizza_mode,
-            'pizza_orders': []
+            'pizza_orders': pizza_orders,
         }
     )
 
@@ -101,13 +105,12 @@ def add_assistant_message(request):
     # Handle the actual calling of the functions
     for function, data in llm_response.server_functions:
         match function:
-            case "create_pizza_order":
-                create_pizza_order(payload=data)
-            case "update_pizza_order":
-                order_id, pizza_order = data
-                update_pizza_order(order_id=order_id, payload=pizza_order)
-            case "delete_pizza_order":
-                delete_pizza_order(order_id=data)
+            case 'create_pizza_order':
+                create_pizza_order(request=request, payload=data)
+            case 'update_pizza_order':
+                update_pizza_order(request=request, order_id=data[0], payload=data[1])
+            case 'delete_pizza_order':
+                delete_pizza_order(request=request, order_id=data)
 
     return render(
         request,
