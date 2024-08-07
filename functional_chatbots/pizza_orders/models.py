@@ -14,6 +14,7 @@ class PizzaOrder(models.Model):
     size = models.CharField(max_length=50, choices=[("small", "Small"), ("medium", "Medium"), ("large", "Large")])
     created_at = models.DateTimeField(auto_now_add=True)
     total_time = models.IntegerField(default=60)
+    session_key = models.CharField(max_length=40, null=True, blank=True)
 
     def add_extra_time(self, seconds: int) -> None:
         """Add extra time to the total cooking time of the pizza order."""

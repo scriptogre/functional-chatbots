@@ -45,7 +45,7 @@ def pizza_order_create_form_view(request):
 @router.post('/pizza-orders/add')
 def pizza_order_create_view(request, payload: Form[PizzaOrderIn]):
     """Creates the pizza order"""
-    create_pizza_order(payload)
+    create_pizza_order(request, payload)
     return HttpResponse(status=204, headers={'HX-Trigger': 'pizzaOrdersUpdated'})
 
 
@@ -54,14 +54,14 @@ def pizza_order_create_view(request, payload: Form[PizzaOrderIn]):
 @router.get('/pizza-orders/{order_id}/update')
 def pizza_order_update_form_view(request, order_id: int):
     """Renders the form to update a pizza order"""
-    pizza_order = get_pizza_order(order_id)
+    pizza_order = get_pizza_order(request, order_id)
     return render(request, 'pizza_order_update_form', {'pizza_order': pizza_order})
 
 
 @router.post('/pizza-orders/{order_id}/update')
 def pizza_order_update_view(request, order_id: int, payload: Form[PizzaOrderIn]):
     """Updates the pizza order"""
-    update_pizza_order(order_id, payload)
+    update_pizza_order(request, order_id, payload)
     return HttpResponse(status=204, headers={'HX-Trigger': 'pizzaOrdersUpdated'})
 
 
@@ -76,6 +76,6 @@ def pizza_order_delete_form_view(request, order_id: int):
 @router.post('/pizza-orders/{order_id}/delete')
 def pizza_order_delete_view(request, order_id: int):
     """Deletes the pizza order"""
-    delete_pizza_order(order_id)
+    delete_pizza_order(request, order_id)
     return HttpResponse(status=204, headers={'HX-Trigger': 'pizzaOrdersUpdated'})
 
