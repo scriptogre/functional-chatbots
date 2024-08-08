@@ -16,8 +16,3 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the project files to the working directory
 COPY . /code/
-
-# Expose the application on port 8000
-EXPOSE 8000
-
-CMD python manage.py runserver 0.0.0.0:8000
