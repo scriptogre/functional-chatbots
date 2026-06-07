@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+# Common
+# --------------------------------------------------
+python manage.py migrate --noinput
+python manage.py collectstatic --noinput --clear
+
+if [ "$ENVIRONMENT" = "local" ]; then
+    echo "Running in local development mode"
+    exec python manage.py runserver 0.0.0.0:8000
+
+elif [ "$ENVIRONMENT" = "production" ]; then
+    echo "Running in production mode"
+    exec gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 2
+fi

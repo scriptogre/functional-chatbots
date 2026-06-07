@@ -1,5 +1,0 @@
-python-dotenv
-django-ninja
-jinjax
-groq
-instructor

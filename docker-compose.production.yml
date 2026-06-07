@@ -1,0 +1,24 @@
+name: functional-chatbots
+
+# Reuse caddy_default so the reverse proxy can reach this service
+# without docker_network creating another subnet (the pool is full).
+networks:
+  default:
+    name: caddy_default
+    external: true
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile
+      args:
+        - ENVIRONMENT=production
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.production
+    expose:
+      - 8000
+    command: /start
+    restart: unless-stopped

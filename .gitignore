@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+.uv/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+media/
+
+# Env
+.env
+.env.local
+
+# Tools
+.idea/
+.vscode/
+.DS_Store
+
+# Tailwind
+tailwindcss
+tailwindcss.exe
+main/static/main/css/
+
+# Logs
+*.log

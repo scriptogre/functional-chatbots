@@ -1,0 +1,97 @@
+{% extends "base.jinja" %}
+{% from "partials/_macros.jinja" import chat_message, chat_input, chat_placeholder, pizza_order, pizza_order_placeholder %}
+
+{% block content %}
+
+<!-- Toggles -->
+<div class="absolute right-5 top-4 flex items-center gap-2">
+
+    <label id="dark-mode-toggle"
+           class="group inline-flex p-1 text-lg cursor-pointer text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 duration-200"
+           hx-post="/toggle-dark-mode"
+           hx-trigger="click, toggleDarkMode from:body delay:100ms"
+           hx-select="#dark-mode-toggle"
+           hx-swap="outerHTML">
+        <input name="is_dark_mode" class="hidden" type="checkbox" autocomplete="off" {% if is_dark_mode|default(False) %}checked{% endif %} />
+        <iconify-icon icon="ri:moon-clear-line" class="hidden group-has-[:checked]:block"></iconify-icon>
+        <iconify-icon icon="ri:sun-line" class="group-has-[:checked]:hidden"></iconify-icon>
+    </label>
+
+    <label id="fullscreen-mode-toggle"
+           class="group inline-flex p-1 text-lg cursor-pointer text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 duration-200 hidden sm:inline-flex"
+           hx-post="/toggle-fullscreen-mode"
+           hx-trigger="click, toggleFullscreenMode from:body delay:200ms"
+           hx-select="#fullscreen-mode-toggle"
+           hx-swap="outerHTML">
+        <input name="is_fullscreen_mode" class="hidden" type="checkbox" autocomplete="off" {% if is_fullscreen_mode|default(False) %}checked{% endif %} />
+        <iconify-icon icon="majesticons:minimize" class="hidden group-has-[:checked]:block"></iconify-icon>
+        <iconify-icon icon="majesticons:maximize" class="group-has-[:checked]:hidden"></iconify-icon>
+    </label>
+
+    <label id="pizza-mode-toggle"
+           class="group inline-flex p-1 text-lg cursor-pointer text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 duration-200"
+           hx-post="/toggle-pizza-mode"
+           hx-trigger="click, togglePizzaMode from:body delay:300ms"
+           hx-select="#pizza-mode-toggle"
+           hx-swap="outerHTML">
+        <input name="is_pizza_mode" class="hidden" type="checkbox" autocomplete="off" {% if is_pizza_mode|default(False) %}checked{% endif %} />
+        <iconify-icon icon="fluent-emoji-flat:pizza" class="hidden group-has-[:checked]:block"></iconify-icon>
+        <iconify-icon icon="fluent-emoji-high-contrast:pizza" class="group-has-[:checked]:hidden"></iconify-icon>
+    </label>
+
+</div>
+
+<!-- Pizza Orders -->
+<div class="size-full max-h-[0px] max-sm:pizza:max-h-[33%] sm:max-h-full sm:h-[400px] sm:fullscreen:h-full sm:max-w-0 sm:pizza:max-w-[400px] flex-col gap-3 pizza:mb-3 sm:pizza:mb-0 sm:pizza:me-3 opacity-0 pizza:opacity-100 pointer-events-none pizza:pointer-events-auto transition-[height,max-width,max-height] will-change-[height,max-height,max-width]">
+
+    <div class="relative flex flex-col p-6 overflow-y-auto size-full bg-neutral-100 border border-transparent shadow rounded-2xl [scrollbar-width:none] [-ms-overflow-style:none] scroll-smooth transition-colors duration-[250ms] dark:bg-[#161C1D] dark:border-neutral-200/5 !bg-opacity-90 group">
+
+        <div id="pizza-orders" class="flex flex-col max-h-[calc(100%-3.5rem)] overflow-scroll"
+             hx-get="/pizza-orders" hx-select="#pizza-orders" hx-swap="outerHTML" hx-trigger="pizzaOrdersUpdated from:body" hx-disinherit="hx-select">
+            {% for order in pizza_orders|default([]) %}
+                {{ pizza_order(order) }}
+            {% endfor %}
+        </div>
+
+        <button id="add-pizza-order-button" type="button"
+                class="hidden group-has-[.pizza-order]:block text-black bg-orange-500 hover:bg-orange-600 dark:bg-amber-500 dark:hover:bg-amber-400 inline-flex items-center justify-center px-3 py-1.5 mt-auto rounded-lg transition-colors duration-[250ms] font-[500] whitespace-nowrap"
+                hx-get="/pizza-orders/add" hx-target="body" hx-swap="beforeend">
+            Add Pizza Order
+        </button>
+
+        {{ pizza_order_placeholder() }}
+
+    </div>
+</div>
+
+<!-- Chat -->
+<div class="flex flex-col gap-3 w-full h-full sm:max-w-[500px] sm:max-h-[400px] sm:fullscreen:max-w-full sm:fullscreen:max-h-full max-w-xl transition-[max-width,max-height]">
+
+    <div id="chat-container" class="flex flex-col size-full p-4 bg-neutral-100 border border-transparent shadow rounded-2xl overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] scroll-smooth transition-colors duration-[250ms] dark:bg-[#161C1D] dark:border-neutral-200/5 bg-opacity-95 dark:bg-opacity-95 sm:p-8 group">
+
+        {{ chat_message(role='assistant', content='Typing...', id='typing-indicator', extra_class='hidden order-last [body:has(#trigger-assistant.htmx-request)_&]:flex [animation:fade_0.5s_both_0.25s]') }}
+
+        {{ chat_placeholder() }}
+
+        {% for msg in chat_messages|default([]) %}
+            {{ chat_message(role=msg.role, content=msg.content) }}
+        {% endfor %}
+
+    </div>
+
+    <form id="user-message-form"
+          hx-post="/add-user-message"
+          hx-target="#chat-container"
+          hx-swap="beforeend scroll:#chat-container:bottom"
+          hx-on::after-request="htmx.find('input[name=message]').value = ''">
+        {{ chat_input(name='message') }}
+    </form>
+
+    <input id="trigger-assistant" type="hidden"
+           hx-post="/add-assistant-message"
+           hx-target="#chat-container"
+           hx-swap="beforeend scroll:#chat-container:bottom"
+           hx-trigger="generateAssistantMessage from:body" />
+</div>
+
+{% endblock %}

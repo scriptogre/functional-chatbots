@@ -1,0 +1,50 @@
+# Project
+# --------------------------------
+[project]
+name = "functional-chatbots"
+version = "0.2.0"
+description = "Functional LLM Chatbots demo from DjangoCon Europe 2024, refreshed for 2026."
+authors = [{ name = "Christian Tanul", email = "tanulchristian@gmail.com" }]
+requires-python = ">=3.12"
+readme = "README.md"
+
+dependencies = [
+    "Django>=5.1",
+    "django-environ>=0.11",
+    "django-ninja>=1.6.2",
+    "django-jinja>=2.11",
+    "django-htmx>=1.21",
+    "whitenoise>=6.8",
+    "litellm>=1.55",
+    "pydantic>=2.9",
+]
+
+[project.optional-dependencies]
+local = [
+    "watchfiles>=1.0",
+    "django-extensions>=3.2",
+    "ruff>=0.8",
+]
+production = [
+    "gunicorn>=23.0",
+    "uvicorn[standard]>=0.32",
+    "uvicorn-worker>=0.2",
+]
+
+
+# ruff
+# --------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [".venv", "staticfiles", "*/migrations/*"]
+
+[tool.ruff.lint]
+select = ["F", "E", "W", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "single"

@@ -1,0 +1,17 @@
+name: functional-chatbots-local
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile
+      args:
+        - ENVIRONMENT=local
+    volumes:
+      - .:/app:z
+      - /app/.venv/
+    env_file:
+      - .env
+    ports:
+      - '8000:8000'
+    command: /start
