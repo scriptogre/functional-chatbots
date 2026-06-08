@@ -1,5 +1,5 @@
 {% extends "base.jinja" %}
-{% from "partials/_macros.jinja" import chat_message, chat_input, chat_placeholder, pizza_order, pizza_order_placeholder %}
+{% from "partials/_macros.jinja" import chat_message, chat_input, chat_placeholder, pizza_order, pizza_order_placeholder, toggle_pill %}
 
 {% block content %}
 
@@ -73,6 +73,30 @@
            hx-target="#chat-container"
            hx-swap="afterbegin"
            hx-trigger="generateAssistantMessage from:body" />
+
+    {# Mode pills, content-sized, centered under the chat input. They share
+       the same gap-3 as everything else in the chat column so the spacing
+       reads as one tight cluster: chat -> input -> pills. #}
+    <div class="mx-auto inline-flex items-center gap-1 p-1 rounded-2xl bg-neutral-100 dark:bg-neutral-875 border border-transparent dark:border-neutral-200/5 shadow pizza:bg-black/30 pizza:border-white/10">
+        {{ toggle_pill(
+            id='dark-mode-toggle', name='is_dark_mode', checked=is_dark_mode|default(False),
+            label='Dark', icon_class='icon-[ri--moon-clear-line]',
+            hx_post='/toggle-dark-mode',
+            hx_trigger='click, toggleDarkMode from:body delay:100ms'
+        ) }}
+        {{ toggle_pill(
+            id='fullscreen-mode-toggle', name='is_fullscreen_mode', checked=is_fullscreen_mode|default(False),
+            label='Fullscreen', icon_class='icon-[majesticons--maximize]',
+            hx_post='/toggle-fullscreen-mode',
+            hx_trigger='click, toggleFullscreenMode from:body delay:200ms'
+        ) }}
+        {{ toggle_pill(
+            id='pizza-mode-toggle', name='is_pizza_mode', checked=is_pizza_mode|default(False),
+            label='Pizza', icon_class='icon-[game-icons--full-pizza]',
+            hx_post='/toggle-pizza-mode',
+            hx_trigger='click, togglePizzaMode from:body delay:300ms'
+        ) }}
+    </div>
 </div>
 
 {% endblock %}

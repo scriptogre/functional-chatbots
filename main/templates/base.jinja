@@ -16,8 +16,6 @@
 
 <body class="font-sans text-neutral-800 dark:text-neutral-100">
 
-{% from "partials/_macros.jinja" import toggle_pill %}
-
 <div class="*:fixed *:inset-0 *:transition-opacity *:duration-[250ms] *:size-full">
     <div id="background-dark" class="opacity-0 dark:opacity-100 bg-neutral-940"></div>
     <div id="background-light" class="opacity-100 dark:opacity-0 bg-gradient-to-br from-neutral-100 to-neutral-300"></div>
@@ -40,34 +38,9 @@
     </a>
 </div>
 
-<main class="relative z-10 flex flex-col sm:flex-row justify-center items-start sm:items-center h-screen pt-14 pb-24 px-6">
+<main class="relative z-10 flex flex-col sm:flex-row justify-center items-start sm:items-center h-screen py-14 px-6">
     {% block content %}{% endblock %}
 </main>
-
-{# Mode pills, bottom-center, fixed. Content-sized so they don't stretch
-   absurdly when the chat panel goes fullscreen. Each pill keeps its
-   <input name="is_X_mode"> for the dark/fullscreen/pizza custom variants
-   on html:has(input[name=...]:checked) *. #}
-<div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-1 p-1 rounded-2xl bg-neutral-100 dark:bg-neutral-875 border border-transparent dark:border-neutral-200/5 shadow pizza:bg-black/30 pizza:border-white/10">
-    {{ toggle_pill(
-        id='dark-mode-toggle', name='is_dark_mode', checked=request.session['is_dark_mode']|default(False),
-        label='Dark', icon_class='icon-[ri--moon-clear-line]',
-        hx_post='/toggle-dark-mode',
-        hx_trigger='click, toggleDarkMode from:body delay:100ms'
-    ) }}
-    {{ toggle_pill(
-        id='fullscreen-mode-toggle', name='is_fullscreen_mode', checked=request.session['is_fullscreen_mode']|default(False),
-        label='Fullscreen', icon_class='icon-[majesticons--maximize]',
-        hx_post='/toggle-fullscreen-mode',
-        hx_trigger='click, toggleFullscreenMode from:body delay:200ms'
-    ) }}
-    {{ toggle_pill(
-        id='pizza-mode-toggle', name='is_pizza_mode', checked=request.session['is_pizza_mode']|default(False),
-        label='Pizza', icon_class='icon-[game-icons--full-pizza]',
-        hx_post='/toggle-pizza-mode',
-        hx_trigger='click, togglePizzaMode from:body delay:300ms'
-    ) }}
-</div>
 
 </body>
 </html>

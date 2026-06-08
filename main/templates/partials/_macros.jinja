@@ -23,11 +23,7 @@
     <button type="submit" class="inline-flex justify-center items-center size-10 m-2 rounded-xl text-neutral-400 transition-colors duration-[250ms] group-has-[input:focus:placeholder-shown]:text-neutral-500 group-has-[input:focus]:text-neutral-600 dark:text-neutral-400 dark:group-has-[input:focus:placeholder-shown]:text-neutral-300 dark:group-has-[input:focus]:text-neutral-200">
         <span class="icon-[fluent--send-28-filled] size-5 transition-transform"></span>
     </button>
-    <span class="hidden group-has-[input:focus]:sm:flex group-has-[input:focus:placeholder-shown]:hidden items-center text-xs absolute -bottom-6 left-0 animate-fade tracking-wide pizza:text-neutral-100">
-        <span class="icon-[mi--enter] me-1.5 text-lg translate-y-[1px] inline-block"></span>
-        Press <span class="px-1 font-[monospace] translate-y-[0px] text-[0.7rem]">Enter</span> to send the message
-    </span>
-</label>
+    </label>
 {% endmacro %}
 
 
@@ -128,7 +124,7 @@
 
 {% macro pizza_order_placeholder() %}
 <button type="button"
-        class="absolute inset-0 size-full group block cursor-pointer rounded-2xl border-2 border-dashed border-neutral-400 dark:border-neutral-500 text-center text-neutral-500 dark:text-neutral-300 hover:border-orange-500 hover:text-orange-500 hover:bg-orange-500/5 dark:hover:border-amber-500 dark:hover:text-amber-500 dark:hover:bg-amber-500/10 focus:border-orange-500 dark:focus:border-amber-500 duration-200 whitespace-nowrap transition-colors group-has-[.pizza-order]:hidden"
+        class="absolute inset-0 size-full group block cursor-pointer rounded-2xl border-2 border-dashed border-neutral-300/70 dark:border-neutral-700 text-center text-neutral-500 dark:text-neutral-300 hover:border-orange-500 hover:text-orange-500 hover:bg-orange-500/5 dark:hover:border-amber-500 dark:hover:text-amber-500 dark:hover:bg-amber-500/10 focus:border-orange-500 dark:focus:border-amber-500 duration-200 whitespace-nowrap transition-colors group-has-[.pizza-order]:hidden"
         hx-get="/pizza-orders/add" hx-target="body" hx-swap="beforeend">
     <span class="mx-auto relative text-neutral-500 group-hover:text-orange-500 group-focus:text-orange-500 dark:text-neutral-300 dark:group-hover:text-amber-500 dark:group-focus:text-amber-500 transition-[color,transform] group-hover:scale-110 duration-[250ms]">
         <span class="icon-[game-icons--full-pizza] size-12"></span>
