@@ -31,3 +31,7 @@ node_modules/
 
 # Logs
 *.log
+
+# Syncthing
+.syncthing.*.tmp
+*.sync-conflict-*

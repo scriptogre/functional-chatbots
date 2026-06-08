@@ -13,3 +13,6 @@ tailwindcss
 tailwindcss.exe
 *.log
 .DS_Store
+
+.syncthing.*.tmp
+*.sync-conflict-*
