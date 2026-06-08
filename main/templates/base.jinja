@@ -16,30 +16,58 @@
 
 <body class="font-sans text-neutral-800 dark:text-neutral-100">
 
+{% from "partials/_macros.jinja" import toggle_pill %}
+
 <div class="*:fixed *:inset-0 *:transition-opacity *:duration-[250ms] *:size-full">
     <div id="background-dark" class="opacity-0 dark:opacity-100 bg-neutral-940"></div>
     <div id="background-light" class="opacity-100 dark:opacity-0 bg-gradient-to-br from-neutral-100 to-neutral-300"></div>
     <video id="background-pizza" src="{{ static('main/pizza-footage.webm') }}" class="object-cover opacity-0 pizza:opacity-100 dark:saturate-50 brightness-50 duration-200 after:content-[''] relative after:absolute after:size-full after:opacity-20 after:bg-black" muted autoplay loop playsinline></video>
 </div>
 
-<div class="fixed top-4 left-6 sm:left-1/2 sm:-translate-x-1/2 h-fit max-h-[80px] overflow-hidden transition-[max-height,margin-bottom] duration-[250ms] flex flex-col sm:items-center justify-center mb-3 sm:mb-6 sm:fullscreen:max-h-0 sm:fullscreen:mb-0 pizza:text-neutral-300">
+<div class="fixed top-4 left-6 sm:left-1/2 sm:-translate-x-1/2 h-fit max-h-[80px] overflow-hidden transition-[max-height,margin-bottom] duration-[250ms] flex flex-col sm:items-center justify-center mb-3 sm:mb-6 sm:fullscreen:max-h-0 sm:fullscreen:mb-0 pizza:text-neutral-300 z-10">
     <a href="https://github.com/scriptogre/functional-chatbots" target="_blank" rel="noopener" class="sm:text-xl transition-[margin-bottom] duration-[250ms] mb-1.5 sm:mb-3">
         <code>Functional Chatbots · DjangoCon Europe 2024</code>
     </a>
 </div>
 
-<main class="relative z-10 flex flex-col sm:flex-row justify-center items-start sm:items-center h-screen py-14 px-6">
+{# Social icons, top-right, fixed. #}
+<div class="fixed top-4 right-5 flex items-center gap-2 z-10">
+    <a href="https://github.com/scriptogre" target="_blank" rel="noopener" class="p-1 text-lg text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 transition-colors duration-[250ms]" aria-label="Github">
+        <span class="icon-[akar-icons--github-fill]"></span>
+    </a>
+    <a href="https://www.linkedin.com/in/christian-tanul-94333a17a/" target="_blank" rel="noopener" class="p-1 text-lg text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 transition-colors duration-[250ms]" aria-label="LinkedIn">
+        <span class="icon-[akar-icons--linkedin-fill]"></span>
+    </a>
+</div>
+
+<main class="relative z-10 flex flex-col sm:flex-row justify-center items-start sm:items-center h-screen pt-14 pb-24 px-6">
     {% block content %}{% endblock %}
 </main>
 
-<footer class="flex items-center fixed right-1/2 translate-x-1/2 bottom-4 gap-2 sm:fullscreen:right-6 sm:fullscreen:translate-x-0 transition-[bottom,right,transform] duration-[250ms]">
-    <a href="https://github.com/scriptogre" target="_blank" rel="noopener" class="p-1 text-neutral-500 hover:text-neutral-600 dark:text-neutral-400 hover:dark:text-neutral-200 pizza:text-neutral-300 hover:pizza:text-neutral-50 transition-colors duration-[250ms]" aria-label="Github">
-        <span class="icon-[akar-icons--github-fill] translate-y-1"></span>
-    </a>
-    <a href="https://www.linkedin.com/in/christian-tanul-94333a17a/" target="_blank" rel="noopener" class="p-1 text-neutral-500 hover:text-neutral-600 dark:text-neutral-400 hover:dark:text-neutral-200 pizza:text-neutral-300 hover:pizza:text-neutral-50 transition-colors duration-[250ms]" aria-label="LinkedIn">
-        <span class="icon-[akar-icons--linkedin-fill] translate-y-1"></span>
-    </a>
-</footer>
+{# Mode pills, bottom-center, fixed. Content-sized so they don't stretch
+   absurdly when the chat panel goes fullscreen. Each pill keeps its
+   <input name="is_X_mode"> for the dark/fullscreen/pizza custom variants
+   on html:has(input[name=...]:checked) *. #}
+<div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-1 p-1 rounded-2xl bg-neutral-100/90 dark:bg-neutral-875/90 border border-neutral-200 dark:border-neutral-200/5 shadow-lg backdrop-blur pizza:bg-black/30 pizza:border-white/10">
+    {{ toggle_pill(
+        id='dark-mode-toggle', name='is_dark_mode', checked=request.session['is_dark_mode']|default(False),
+        label='Dark', icon_class='icon-[ri--moon-clear-line]',
+        hx_post='/toggle-dark-mode',
+        hx_trigger='click, toggleDarkMode from:body delay:100ms'
+    ) }}
+    {{ toggle_pill(
+        id='fullscreen-mode-toggle', name='is_fullscreen_mode', checked=request.session['is_fullscreen_mode']|default(False),
+        label='Fullscreen', icon_class='icon-[majesticons--maximize]',
+        hx_post='/toggle-fullscreen-mode',
+        hx_trigger='click, toggleFullscreenMode from:body delay:200ms'
+    ) }}
+    {{ toggle_pill(
+        id='pizza-mode-toggle', name='is_pizza_mode', checked=request.session['is_pizza_mode']|default(False),
+        label='Pizza', icon_class='icon-[game-icons--full-pizza]',
+        hx_post='/toggle-pizza-mode',
+        hx_trigger='click, togglePizzaMode from:body delay:300ms'
+    ) }}
+</div>
 
 </body>
 </html>

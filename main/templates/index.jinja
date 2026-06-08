@@ -1,5 +1,5 @@
 {% extends "base.jinja" %}
-{% from "partials/_macros.jinja" import chat_message, chat_input, chat_placeholder, pizza_order, pizza_order_placeholder, toggle_pill %}
+{% from "partials/_macros.jinja" import chat_message, chat_input, chat_placeholder, pizza_order, pizza_order_placeholder %}
 
 {% block content %}
 
@@ -73,30 +73,6 @@
            hx-target="#chat-container"
            hx-swap="afterbegin"
            hx-trigger="generateAssistantMessage from:body" />
-
-    {# Mode pills. The chat is the star and these are its remote control,
-       so they sit directly under the input. Their <input>s also drive the
-       custom Tailwind variants (dark:, fullscreen:, pizza:). #}
-    <div class="grid grid-cols-3 gap-2">
-        {{ toggle_pill(
-            id='dark-mode-toggle', name='is_dark_mode', checked=is_dark_mode|default(False),
-            label='Dark', icon_class='icon-[ri--moon-clear-line]',
-            hx_post='/toggle-dark-mode',
-            hx_trigger='click, toggleDarkMode from:body delay:100ms'
-        ) }}
-        {{ toggle_pill(
-            id='fullscreen-mode-toggle', name='is_fullscreen_mode', checked=is_fullscreen_mode|default(False),
-            label='Fullscreen', icon_class='icon-[majesticons--maximize]',
-            hx_post='/toggle-fullscreen-mode',
-            hx_trigger='click, toggleFullscreenMode from:body delay:200ms'
-        ) }}
-        {{ toggle_pill(
-            id='pizza-mode-toggle', name='is_pizza_mode', checked=is_pizza_mode|default(False),
-            label='Pizza', icon_class='icon-[game-icons--full-pizza]',
-            hx_post='/toggle-pizza-mode',
-            hx_trigger='click, togglePizzaMode from:body delay:300ms'
-        ) }}
-    </div>
 </div>
 
 {% endblock %}
