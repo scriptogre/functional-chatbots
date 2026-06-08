@@ -19,7 +19,7 @@
            Don't combine `hidden` + `inline-flex` directly: Tailwind v4
            emits .inline-flex after .hidden so the latter never wins. #}
         <button id="add-pizza-order-button" type="button"
-                class="hidden group-has-[.pizza-order]:inline-flex text-black bg-orange-500 hover:bg-orange-600 dark:bg-amber-500 dark:hover:bg-amber-400 items-center justify-center px-3 py-1.5 mt-auto rounded-lg transition-colors duration-[250ms] font-[600] whitespace-nowrap"
+                class="hidden cursor-pointer group-has-[.pizza-order]:inline-flex text-black bg-orange-500 hover:bg-orange-600 dark:bg-amber-500 dark:hover:bg-amber-400 items-center justify-center px-3 py-1.5 mt-auto rounded-lg transition-colors duration-[250ms] font-[600] whitespace-nowrap"
                 hx-get="/pizza-orders/add" hx-target="body" hx-swap="beforeend">
             Add Pizza Order
         </button>

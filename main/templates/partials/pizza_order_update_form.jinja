@@ -22,11 +22,11 @@
             </div>
 
             <div class="flex justify-end items-center gap-2">
-                <button type="button" class="w-1/3 hover:text-white text-red-500 bg-transparent hover:bg-red-500 dark:hover:bg-red-600 inline-flex items-center justify-center px-3 py-1.5 mt-auto rounded-lg transition-colors duration-[250ms] font-[600] whitespace-nowrap"
+                <button type="button" class="w-1/3 hover:text-white text-red-500 bg-transparent hover:bg-red-500 dark:hover:bg-red-600 cursor-pointer inline-flex items-center justify-center px-3 py-1.5 mt-auto rounded-lg transition-colors duration-[250ms] font-[600] whitespace-nowrap"
                         hx-get="/pizza-orders/{{ pizza_order.id }}/delete" hx-target="body" hx-swap="beforeend">
                     Delete
                 </button>
-                <button autofocus type="submit" class="w-1/3 bg-orange-500 hover:bg-orange-600 dark:bg-amber-500 dark:hover:bg-amber-400 text-white dark:text-black inline-flex items-center justify-center px-3 py-1.5 mt-auto rounded-lg transition-colors duration-[250ms] font-[600] whitespace-nowrap">
+                <button autofocus type="submit" class="w-1/3 bg-orange-500 hover:bg-orange-600 dark:bg-amber-500 dark:hover:bg-amber-400 text-white dark:text-black cursor-pointer inline-flex items-center justify-center px-3 py-1.5 mt-auto rounded-lg transition-colors duration-[250ms] font-[600] whitespace-nowrap">
                     Update
                 </button>
             </div>
