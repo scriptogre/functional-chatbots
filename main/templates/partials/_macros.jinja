@@ -48,16 +48,16 @@
    Same hx-post + hx-trigger + hx-select pattern as the old toggles. #}
 {% macro toggle_pill(id, name, checked, label, icon_class, hx_post, hx_trigger) %}
 <label id="{{ id }}"
-       class="group flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer select-none hover:bg-neutral-100 dark:hover:bg-neutral-825/60 transition-colors duration-[150ms]"
+       class="group flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer select-none hover:bg-neutral-100 dark:hover:bg-neutral-825/60 pizza:hover:bg-white/10 transition-colors duration-[150ms]"
        hx-post="{{ hx_post }}"
        hx-trigger="{{ hx_trigger }}"
        hx-select="#{{ id }}"
        hx-swap="outerHTML">
     <input name="{{ name }}" type="checkbox" autocomplete="off" class="peer sr-only" {% if checked %}checked{% endif %} />
-    <span class="{{ icon_class }} size-4 shrink-0 text-neutral-500 dark:text-neutral-400 peer-checked:text-orange-500 dark:peer-checked:text-amber-500 transition-colors"></span>
-    <span class="flex-1 text-sm text-neutral-700 dark:text-neutral-300 peer-checked:font-[600] truncate">{{ label }}</span>
+    <span class="{{ icon_class }} size-4 shrink-0 text-neutral-500 dark:text-neutral-400 pizza:text-neutral-200 peer-checked:text-orange-500 dark:peer-checked:text-amber-500 transition-colors"></span>
+    <span class="flex-1 text-sm text-neutral-700 dark:text-neutral-300 pizza:text-neutral-100 peer-checked:font-[600] truncate">{{ label }}</span>
     <span aria-hidden="true"
-          class="relative shrink-0 w-9 h-5 rounded-full bg-neutral-300 dark:bg-neutral-700 peer-checked:bg-orange-500 dark:peer-checked:bg-amber-500 transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:size-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4"></span>
+          class="relative shrink-0 w-9 h-5 rounded-full bg-neutral-300 dark:bg-neutral-700 pizza:bg-white/25 peer-checked:bg-orange-500 dark:peer-checked:bg-amber-500 transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:size-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4"></span>
 </label>
 {% endmacro %}
 
