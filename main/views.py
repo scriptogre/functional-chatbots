@@ -69,11 +69,24 @@ def add_assistant_message(request):
 
     dispatch_server_functions(reply.server_functions)
 
+    client_events = list(reply.client_events)
+    pizza_changed = any(
+        fn.name.endswith('pizza_order') for fn in reply.server_functions
+    )
+    if pizza_changed and 'pizzaOrdersUpdated' not in client_events:
+        client_events.append('pizzaOrdersUpdated')
+
+    # Auto-show the pizza panel when an order is created and pizza mode is off,
+    # otherwise the user can't see the order they just placed.
+    created_order = any(fn.name == 'create_pizza_order' for fn in reply.server_functions)
+    if created_order and not is_pizza_mode and 'togglePizzaMode' not in client_events:
+        client_events.append('togglePizzaMode')
+
     return render(
         request,
         'partials/chat_message',
         {'role': 'assistant', 'content': reply.message},
-        headers={'HX-Trigger': ', '.join(reply.client_events)} if reply.client_events else None,
+        headers={'HX-Trigger': ', '.join(client_events)} if client_events else None,
     )
 
 
