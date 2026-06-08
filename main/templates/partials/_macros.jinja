@@ -18,8 +18,8 @@
 {# Border is near-invisible by default and only nudges one step up
    on hover / focus, matching dromos's chat input style. No outline,
    no big color jumps. #}
-<label class="group relative flex items-center rounded-xl ps-6 pe-0 bg-neutral-100 shadow border border-transparent dark:bg-neutral-875 dark:border-neutral-200/5 hover:border-neutral-200 dark:hover:border-neutral-200/10 has-[:focus]:border-neutral-300 dark:has-[:focus]:border-neutral-200/15 transition-colors duration-[150ms] [&>input]:outline-none [&>input]:bg-transparent [&>input]:grow [&>input]:text-sm">
-    <input id="chat-input" name="{{ name }}" type="text" placeholder="Type a message..." autocomplete="off" required />
+<label class="group relative flex items-center rounded-xl ps-6 pe-0 bg-neutral-100 shadow border border-transparent dark:bg-neutral-875 dark:border-neutral-200/5 hover:border-neutral-200 dark:hover:border-neutral-200/10 has-[:focus]:border-neutral-300 dark:has-[:focus]:border-neutral-200/15 transition-[background-color,border-color] duration-[150ms] [&>input]:outline-none [&>input]:bg-transparent [&>input]:grow [&>input]:text-sm">
+    <input id="chat-input" name="{{ name }}" type="text" placeholder="Type a message..." autocomplete="off" required class="placeholder:text-neutral-500 dark:placeholder:text-neutral-400" />
     <button type="submit" class="inline-flex justify-center items-center size-10 m-2 rounded-xl text-neutral-400 transition-colors duration-[250ms] group-has-[input:focus:placeholder-shown]:text-neutral-500 group-has-[input:focus]:text-neutral-600 dark:text-neutral-400 dark:group-has-[input:focus:placeholder-shown]:text-neutral-300 dark:group-has-[input:focus]:text-neutral-200">
         <span class="icon-[fluent--send-28-filled] size-5 transition-transform"></span>
     </button>
