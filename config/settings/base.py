@@ -104,3 +104,7 @@ X_FRAME_OPTIONS = 'DENY'
 GROQ_API_KEY = env('GROQ_API_KEY', default='')
 # Make available to litellm
 os.environ.setdefault('GROQ_API_KEY', GROQ_API_KEY)
+
+# Pick any Groq model: https://console.groq.com/docs/models
+# litellm prefixes Groq models with `groq/`.
+LLM_MODEL = env('LLM_MODEL', default='groq/openai/gpt-oss-20b')

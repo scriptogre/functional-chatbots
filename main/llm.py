@@ -16,8 +16,6 @@ from main.pizza_orders.services import (
 )
 from main.prompts import SYSTEM_PROMPT, generate_contextual_information
 
-MODEL = 'groq/llama-3.3-70b-versatile'
-
 ClientEvent = Literal[
     'toggleDarkMode',
     'toggleFullscreenMode',
@@ -62,7 +60,7 @@ def generate_assistant_reply(
     }
 
     response = litellm.completion(
-        model=MODEL,
+        model=settings.LLM_MODEL,
         api_key=settings.GROQ_API_KEY or None,
         messages=[system_message, *chat_messages],
         response_format={'type': 'json_object'},
