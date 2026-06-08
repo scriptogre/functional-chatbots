@@ -50,7 +50,7 @@ def add_user_message(request, message: Annotated[str, Form()]):
 
 @api.post('/add-assistant-message')
 def add_assistant_message(request):
-    is_dark_mode = request.session.get('is_dark_mode', False)
+    is_dark_mode = request.headers.get('X-Dark-Mode') == 'true'
     is_fullscreen_mode = request.session.get('is_fullscreen_mode', False)
     is_pizza_mode = request.session.get('is_pizza_mode', False)
     pizza_orders = list(PizzaOrder.objects.all().values('id', 'name', 'size'))
@@ -92,7 +92,11 @@ def add_assistant_message(request):
 
 @api.post('/toggle-dark-mode')
 def toggle_dark_mode(request):
-    request.session['is_dark_mode'] = is_dark_mode = not request.session.get('is_dark_mode', False)
+    """Flip based on actual client state (via X-Dark-Mode header), not
+    session. Keeps the server in sync when OS-pref seeded dark before any
+    server-side click happened."""
+    current = request.headers.get('X-Dark-Mode') == 'true'
+    request.session['is_dark_mode'] = is_dark_mode = not current
     return render(request, 'index', {'is_dark_mode': is_dark_mode})
 
 

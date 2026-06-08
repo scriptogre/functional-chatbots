@@ -7,6 +7,23 @@
 
     <link rel="icon" href="{{ static('main/favicon.svg') }}" type="image/svg+xml" />
 
+    {# Match the browser chrome (status bar / address bar) to the page bg. #}
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#e7e7e7" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1f1f1f" />
+
+    {# Seed OS color-scheme preference before stylesheets paint. The dark
+       variant reads this attribute as a default; once the DOM is ready we
+       mirror it onto the toggle's checkbox so its visual state matches. #}
+    <script>
+        if (matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.dataset.osDark = '';
+            document.addEventListener('DOMContentLoaded', () => {
+                const i = document.querySelector('input[name="is_dark_mode"]');
+                if (i) i.checked = true;
+            });
+        }
+    </script>
+
     <link rel="stylesheet" href="{{ static('main/css/fonts.css') }}" />
     <link rel="stylesheet" href="{{ static('main/css/output.css') }}" />
 
@@ -14,60 +31,106 @@
     <script src="{{ static('main/js/hyperscript.min.js') }}"></script>
 </head>
 
-<body class="font-sans text-neutral-800 dark:text-neutral-100">
+<body class="font-sans text-neutral-800 dark:text-neutral-100 h-screen flex flex-col"
+      _="on htmx:configRequest
+           set event.detail.headers['X-Dark-Mode']
+           to (the checked of <input[name='is_dark_mode']/>)
+         on toggleDarkMode
+           remove @data-os-dark from document.documentElement">
 
 {% from "partials/_macros.jinja" import toggle_pill %}
 
-<div class="*:fixed *:inset-0 *:transition-opacity *:duration-[250ms] *:size-full">
-    <div id="background-dark" class="opacity-0 dark:opacity-100 bg-neutral-940"></div>
-    <div id="background-light" class="opacity-100 dark:opacity-0 bg-gradient-to-br from-neutral-100 to-neutral-300"></div>
-    <video id="background-pizza" src="{{ static('main/pizza-footage.webm') }}" class="object-cover opacity-0 pizza:opacity-100 dark:saturate-50 brightness-50 duration-200 after:content-[''] relative after:absolute after:size-full after:opacity-20 after:bg-black" muted autoplay loop playsinline></video>
-</div>
+{# Pizza-mode video overlay (page bg lives on <html> via input.css). #}
+<video id="background-pizza" src="{{ static('main/pizza-footage.webm') }}"
+       class="fixed inset-0 size-full object-cover opacity-0 pizza:opacity-100 dark:saturate-50 brightness-50 transition-opacity duration-[250ms] after:content-[''] after:absolute after:size-full after:opacity-20 after:bg-black"
+       muted autoplay loop playsinline></video>
 
-<div class="fixed top-4 left-6 sm:left-1/2 sm:-translate-x-1/2 h-fit max-h-[80px] overflow-hidden transition-[max-height,margin-bottom] duration-[250ms] flex flex-col sm:items-center justify-center mb-3 sm:mb-6 sm:fullscreen:max-h-0 sm:fullscreen:mb-0 pizza:text-neutral-300 z-10">
-    <a href="https://github.com/scriptogre/functional-chatbots" target="_blank" rel="noopener" class="sm:text-xl transition-[margin-bottom] duration-[250ms] mb-1.5 sm:mb-3">
-        <code>Functional Chatbots · DjangoCon Europe 2024</code>
-    </a>
-</div>
+<header class="relative z-10 flex items-center justify-between gap-3 px-4 sm:px-6 py-4 sm:fullscreen:hidden">
+    <button type="button"
+            class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-full bg-neutral-100 dark:bg-neutral-875 border border-transparent dark:border-neutral-200/5 shadow text-neutral-700 dark:text-neutral-300 hover:text-orange-500 dark:hover:text-amber-500 transition-colors duration-[150ms] cursor-pointer"
+            _="on click call #workshop-dialog.showModal()">
+        <span class="icon-[tabler--info-circle] size-4"></span>
+        About this workshop
+    </button>
+    <nav class="flex items-center gap-2">
+        <a href="https://github.com/scriptogre" target="_blank" rel="noopener" class="p-1 text-lg text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 transition-colors duration-[250ms]" aria-label="Github">
+            <span class="icon-[akar-icons--github-fill]"></span>
+        </a>
+        <a href="https://www.linkedin.com/in/christian-tanul-94333a17a/" target="_blank" rel="noopener" class="p-1 text-lg text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 transition-colors duration-[250ms]" aria-label="LinkedIn">
+            <span class="icon-[akar-icons--linkedin-fill]"></span>
+        </a>
+    </nav>
+</header>
 
-{# Social icons, top-right, fixed. #}
-<div class="fixed top-4 right-5 flex items-center gap-2 z-10">
-    <a href="https://github.com/scriptogre" target="_blank" rel="noopener" class="p-1 text-lg text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 transition-colors duration-[250ms]" aria-label="Github">
-        <span class="icon-[akar-icons--github-fill]"></span>
-    </a>
-    <a href="https://www.linkedin.com/in/christian-tanul-94333a17a/" target="_blank" rel="noopener" class="p-1 text-lg text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 transition-colors duration-[250ms]" aria-label="LinkedIn">
-        <span class="icon-[akar-icons--linkedin-fill]"></span>
-    </a>
-</div>
-
-<main class="relative z-10 flex flex-col sm:flex-row justify-center items-start sm:items-center h-screen pt-14 pb-14 sm:fullscreen:pb-20 px-6 transition-[padding] duration-[250ms]">
+<main class="relative z-10 flex-1 min-h-0 flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-0 px-4 sm:px-6 transition-[padding] duration-[250ms]">
     {% block content %}{% endblock %}
 </main>
 
-{# Mode pills, fixed at the bottom of the viewport. Content-sized so they
-   stay the same width whether the chat column is its 500px box or
-   stretched full-screen. Reads request.session directly so the bar
-   renders correctly on every full-page response. #}
-<div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-1 p-1 rounded-2xl bg-neutral-100 dark:bg-neutral-875 border border-transparent dark:border-neutral-200/5 shadow pizza:bg-black/30 pizza:border-white/10">
-    {{ toggle_pill(
-        id='dark-mode-toggle', name='is_dark_mode', checked=request.session['is_dark_mode']|default(False),
-        label='Dark', icon_class='icon-[ri--moon-clear-line]',
-        hx_post='/toggle-dark-mode',
-        hx_trigger='click, toggleDarkMode from:body delay:100ms'
-    ) }}
-    {{ toggle_pill(
-        id='fullscreen-mode-toggle', name='is_fullscreen_mode', checked=request.session['is_fullscreen_mode']|default(False),
-        label='Fullscreen', icon_class='icon-[majesticons--maximize]',
-        hx_post='/toggle-fullscreen-mode',
-        hx_trigger='click, toggleFullscreenMode from:body delay:200ms'
-    ) }}
-    {{ toggle_pill(
-        id='pizza-mode-toggle', name='is_pizza_mode', checked=request.session['is_pizza_mode']|default(False),
-        label='Pizza', icon_class='icon-[game-icons--full-pizza]',
-        hx_post='/toggle-pizza-mode',
-        hx_trigger='click, togglePizzaMode from:body delay:300ms'
-    ) }}
-</div>
+<footer class="relative z-10 flex justify-center py-4">
+    {# Mode pills row. Content-sized so it stays the same width whether
+       the chat column is its 500px box or stretched full-screen. Reads
+       request.session directly so it renders correctly on every full-page
+       response. #}
+    <div class="inline-flex items-center gap-1 p-1 rounded-2xl bg-neutral-100 dark:bg-neutral-875 border border-transparent dark:border-neutral-200/5 shadow">
+        {{ toggle_pill(
+            id='dark-mode-toggle', name='is_dark_mode', checked=request.session['is_dark_mode']|default(False),
+            label='Dark', icon_class='icon-[ri--moon-clear-line]',
+            hx_post='/toggle-dark-mode',
+            hx_trigger='click, toggleDarkMode from:body delay:100ms',
+            label_script="on click remove @data-os-dark from document.documentElement"
+        ) }}
+        <span class="hidden sm:contents">
+            {{ toggle_pill(
+                id='fullscreen-mode-toggle', name='is_fullscreen_mode', checked=request.session['is_fullscreen_mode']|default(False),
+                label='Fullscreen', icon_class='icon-[majesticons--maximize]',
+                hx_post='/toggle-fullscreen-mode',
+                hx_trigger='click, toggleFullscreenMode from:body delay:200ms'
+            ) }}
+        </span>
+        {{ toggle_pill(
+            id='pizza-mode-toggle', name='is_pizza_mode', checked=request.session['is_pizza_mode']|default(False),
+            label='Pizza', icon_class='icon-[game-icons--full-pizza]',
+            hx_post='/toggle-pizza-mode',
+            hx_trigger='click, togglePizzaMode from:body delay:300ms'
+        ) }}
+    </div>
+</footer>
+
+{# Workshop context modal. Static (not htmx-loaded) so it stays in the
+   DOM and can reopen. Inner backdrop form closes on click. #}
+<dialog id="workshop-dialog"
+        class="[animation:fade_0.2s_both] m-auto bg-transparent text-neutral-800 dark:text-neutral-300 backdrop:backdrop-blur-lg backdrop:bg-black/50 max-w-xl w-[calc(100vw-2rem)]">
+    <div class="flex flex-col bg-neutral-100 border border-transparent shadow rounded-2xl overflow-hidden transition-colors duration-[250ms] dark:bg-neutral-875 dark:border-neutral-200/5">
+        <img src="{{ static('main/workshop.webp') }}"
+             alt="Christian Tanul leading the Functional Chatbots workshop at DjangoCon Europe 2024"
+             class="w-full aspect-video object-cover" />
+        <div class="p-6 sm:p-8 flex flex-col gap-3">
+            <div>
+                <h2 class="text-lg font-[600] text-neutral-900 dark:text-neutral-50">Functional LLM Chatbots</h2>
+                <p class="text-xs uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mt-1">Workshop, DjangoCon Europe 2024, Vigo</p>
+            </div>
+            <p class="text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                Hands-on session on htmx, LLM function calling, and Llama 3. The model drives UI state instead of just generating text. This site is the refreshed workshop demo.
+            </p>
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 text-sm">
+                <a href="https://2024.djangocon.eu/pretalx/djangocon-europe-2024/talk/ZGBQ9K/" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-1.5 text-neutral-700 dark:text-neutral-200 hover:text-orange-500 dark:hover:text-amber-500 transition-colors">
+                    <span class="icon-[tabler--external-link] size-4"></span> Talk page
+                </a>
+                <a href="https://www.youtube.com/watch?v=jtjMR47AAd8" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-1.5 text-neutral-700 dark:text-neutral-200 hover:text-orange-500 dark:hover:text-amber-500 transition-colors">
+                    <span class="icon-[tabler--brand-youtube] size-4"></span> Recording
+                </a>
+                <a href="https://github.com/scriptogre/functional-chatbots" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-1.5 text-neutral-700 dark:text-neutral-200 hover:text-orange-500 dark:hover:text-amber-500 transition-colors">
+                    <span class="icon-[akar-icons--github-fill] size-4"></span> Workshop branches
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <form method="dialog" class="fixed inset-0 -z-10" hx-on:click="this.submit()"></form>
+</dialog>
 
 </body>
 </html>

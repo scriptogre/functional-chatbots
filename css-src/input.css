@@ -44,7 +44,7 @@
     --animate-fade: fade 0.5s both;
 }
 
-@custom-variant dark (&:where(html:has(input[name="is_dark_mode"]:checked) *));
+@custom-variant dark (&:where(html[data-os-dark] *, html:has(input[name="is_dark_mode"]:checked) *));
 @custom-variant fullscreen (&:where(html:has(input[name="is_fullscreen_mode"]:checked) *));
 @custom-variant pizza (&:where(html:has(input[name="is_pizza_mode"]:checked) *));
 
@@ -52,6 +52,14 @@
     html {
         /* Kill the 300ms tap delay and double-tap-to-zoom on mobile. */
         touch-action: manipulation;
+        /* Sets the color of the rubber-band / overscroll area too. */
+        background-color: var(--color-neutral-200);
+        transition: background-color 250ms ease;
+    }
+
+    html[data-os-dark],
+    html:has(input[name="is_dark_mode"]:checked) {
+        background-color: var(--color-neutral-920);
     }
 
     body {

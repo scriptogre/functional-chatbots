@@ -5,7 +5,7 @@
 
     <div class="flex flex-col p-6 px-8 bg-neutral-100 border border-transparent shadow rounded-2xl transition-colors duration-[250ms] dark:bg-neutral-875 dark:border-neutral-200/5">
 
-        <form hx-post="/pizza-orders/add" hx-target="body" hx-swap="beforeend" hx-on::after-request="htmx.find('dialog').close()">
+        <form hx-post="/pizza-orders/add" hx-target="body" hx-swap="beforeend" hx-on::after-request="this.closest('dialog').close()">
 
             <p class="text-center font-[600] mb-3">1. Select pizza:</p>
             <div class="flex justify-center items-center gap-2 mb-6">
