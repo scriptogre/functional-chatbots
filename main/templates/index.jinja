@@ -1,45 +1,7 @@
 {% extends "base.jinja" %}
-{% from "partials/_macros.jinja" import chat_message, chat_input, chat_placeholder, pizza_order, pizza_order_placeholder %}
+{% from "partials/_macros.jinja" import chat_message, chat_input, chat_placeholder, pizza_order, pizza_order_placeholder, toggle_pill %}
 
 {% block content %}
-
-<!-- Toggles -->
-<div class="absolute right-5 top-4 flex items-center gap-2">
-
-    <label id="dark-mode-toggle"
-           class="group inline-flex p-1 text-lg cursor-pointer text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 duration-200"
-           hx-post="/toggle-dark-mode"
-           hx-trigger="click, toggleDarkMode from:body delay:100ms"
-           hx-select="#dark-mode-toggle"
-           hx-swap="outerHTML">
-        <input name="is_dark_mode" class="hidden" type="checkbox" autocomplete="off" {% if is_dark_mode|default(False) %}checked{% endif %} />
-        <span class="icon-[ri--sun-line] group-has-[:checked]:hidden"></span>
-        <span class="icon-[ri--moon-clear-line] hidden group-has-[:checked]:inline-block"></span>
-    </label>
-
-    <label id="fullscreen-mode-toggle"
-           class="group hidden p-1 text-lg cursor-pointer text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 duration-200 sm:inline-flex"
-           hx-post="/toggle-fullscreen-mode"
-           hx-trigger="click, toggleFullscreenMode from:body delay:200ms"
-           hx-select="#fullscreen-mode-toggle"
-           hx-swap="outerHTML">
-        <input name="is_fullscreen_mode" class="hidden" type="checkbox" autocomplete="off" {% if is_fullscreen_mode|default(False) %}checked{% endif %} />
-        <span class="icon-[majesticons--maximize] group-has-[:checked]:hidden"></span>
-        <span class="icon-[majesticons--minimize] hidden group-has-[:checked]:inline-block"></span>
-    </label>
-
-    <label id="pizza-mode-toggle"
-           class="group inline-flex p-1 text-lg cursor-pointer text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 duration-200"
-           hx-post="/toggle-pizza-mode"
-           hx-trigger="click, togglePizzaMode from:body delay:300ms"
-           hx-select="#pizza-mode-toggle"
-           hx-swap="outerHTML">
-        <input name="is_pizza_mode" class="hidden" type="checkbox" autocomplete="off" {% if is_pizza_mode|default(False) %}checked{% endif %} />
-        <span class="icon-[fluent-emoji-high-contrast--pizza] group-has-[:checked]:hidden"></span>
-        <span class="icon-[fluent-emoji-flat--pizza] hidden group-has-[:checked]:inline-block"></span>
-    </label>
-
-</div>
 
 <!-- Pizza Orders -->
 <div class="size-full max-h-[0px] max-sm:pizza:max-h-[33%] sm:max-h-full sm:h-[400px] sm:fullscreen:h-full sm:max-w-0 sm:pizza:max-w-[400px] flex-col gap-3 pizza:mb-3 sm:pizza:mb-0 sm:pizza:me-3 opacity-0 pizza:opacity-100 pointer-events-none pizza:pointer-events-auto transition-[height,max-width,max-height] will-change-[height,max-height,max-width]">
@@ -103,6 +65,30 @@
            hx-target="#chat-container"
            hx-swap="beforeend scroll:#chat-container:bottom"
            hx-trigger="generateAssistantMessage from:body" />
+
+    {# Mode pills. The chat is the star and these are its remote control,
+       so they sit directly under the input. Their <input>s also drive the
+       custom Tailwind variants (dark:, fullscreen:, pizza:). #}
+    <div class="grid grid-cols-3 gap-2">
+        {{ toggle_pill(
+            id='dark-mode-toggle', name='is_dark_mode', checked=is_dark_mode|default(False),
+            label='Dark mode', icon_class='icon-[ri--moon-clear-line]',
+            hx_post='/toggle-dark-mode',
+            hx_trigger='click, toggleDarkMode from:body delay:100ms'
+        ) }}
+        {{ toggle_pill(
+            id='fullscreen-mode-toggle', name='is_fullscreen_mode', checked=is_fullscreen_mode|default(False),
+            label='Fullscreen', icon_class='icon-[majesticons--maximize]',
+            hx_post='/toggle-fullscreen-mode',
+            hx_trigger='click, toggleFullscreenMode from:body delay:200ms'
+        ) }}
+        {{ toggle_pill(
+            id='pizza-mode-toggle', name='is_pizza_mode', checked=is_pizza_mode|default(False),
+            label='Pizza mode', icon_class='icon-[game-icons--full-pizza]',
+            hx_post='/toggle-pizza-mode',
+            hx_trigger='click, togglePizzaMode from:body delay:300ms'
+        ) }}
+    </div>
 </div>
 
 {% endblock %}
