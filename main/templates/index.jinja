@@ -32,30 +32,38 @@
 <!-- Chat -->
 <div class="flex flex-col gap-3 w-full h-full sm:max-w-[500px] sm:max-h-[400px] sm:fullscreen:max-w-full sm:fullscreen:max-h-full max-w-xl transition-[max-width,max-height]">
 
-    <div id="chat-container" class="flex flex-col size-full p-4 bg-neutral-100 border border-transparent shadow rounded-2xl overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] scroll-smooth transition-colors duration-[250ms] dark:bg-neutral-875 dark:border-neutral-200/5 bg-opacity-95 dark:bg-opacity-95 sm:p-8 group">
+    {# Reverse-flex trick: column-reverse + afterbegin keeps the latest
+       message anchored to the visible bottom without manual scroll. DOM
+       order is newest-first; column-reverse flips it visually back to
+       oldest-on-top / newest-on-bottom. Empty state uses justify-center
+       so the placeholder sits in the middle; once a real message exists,
+       :has() flips justify-content to flex-start (which renders at
+       main-start = bottom in column-reverse, the desired stack). #}
+    <div id="chat-container" class="flex flex-col-reverse size-full p-4 bg-neutral-100 border border-transparent shadow rounded-2xl overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] scroll-smooth transition-colors duration-[250ms] dark:bg-neutral-875 dark:border-neutral-200/5 bg-opacity-95 dark:bg-opacity-95 sm:p-8 justify-center has-[.chat-message:not(#typing-indicator)]:justify-start group">
 
-        {# Hidden until an assistant request is in flight. No `inline-flex`
-           default: `.hidden` plus a variant that flips to inline-flex is the
-           only conflict-free pattern in Tailwind v4's source order. #}
+        {# Typing indicator pinned to the visible bottom while in flight.
+           order:-1 places it at main-start (bottom) in column-reverse. #}
         <div id="typing-indicator"
-             class="chat-message hidden order-last [body:has(#trigger-assistant.htmx-request)_&]:inline-flex items-end mb-4 gap-3 sm:fullscreen:mb-6 flex-row [animation:fade_0.5s_both_0.25s]">
-            <img class="size-8 rounded-full object-cover transition-transform duration-[250ms] sm:fullscreen:scale-125"
+             class="chat-message hidden [order:-1] [body:has(#trigger-assistant.htmx-request)_&]:inline-flex items-end mb-4 gap-3 flex-row [animation:fade_0.5s_both_0.25s]">
+            <img class="size-8 rounded-full object-cover transition-transform duration-[250ms]"
                  src="{{ static('main/assistant-avatar.webp') }}" alt="Assistant Avatar" />
-            <div class="py-3 px-4 w-fit max-w-sm text-sm hyphens-auto whitespace-pre-wrap rounded-xl shadow transition-[background-color,font-size,line-height,padding] duration-[250ms] sm:fullscreen:py-4 sm:fullscreen:px-5 sm:fullscreen:text-lg sm:fullscreen:max-w-3xl sm:fullscreen:rounded-2xl bg-neutral-200 dark:bg-neutral-825 rounded-bl-none sm:fullscreen:rounded-bl-none">Typing...</div>
+            <div class="py-3 px-4 w-fit max-w-sm text-sm hyphens-auto whitespace-pre-wrap rounded-xl shadow transition-[background-color,font-size,line-height,padding] duration-[250ms] bg-neutral-200 dark:bg-neutral-825 rounded-bl-none">Typing...</div>
         </div>
 
-        {{ chat_placeholder() }}
-
-        {% for msg in chat_messages|default([]) %}
+        {# Server-rendered history is oldest-first in session.chat_messages;
+           reverse it so newest is DOM-first, which becomes visual-bottom. #}
+        {% for msg in (chat_messages|default([]))|reverse %}
             {{ chat_message(role=msg.role, content=msg.content) }}
         {% endfor %}
+
+        {{ chat_placeholder() }}
 
     </div>
 
     <form id="user-message-form"
           hx-post="/add-user-message"
           hx-target="#chat-container"
-          hx-swap="beforeend scroll:#chat-container:bottom"
+          hx-swap="afterbegin"
           hx-on::after-request="htmx.find('input[name=message]').value = ''">
         {{ chat_input(name='message') }}
     </form>
@@ -63,7 +71,7 @@
     <input id="trigger-assistant" type="hidden"
            hx-post="/add-assistant-message"
            hx-target="#chat-container"
-           hx-swap="beforeend scroll:#chat-container:bottom"
+           hx-swap="afterbegin"
            hx-trigger="generateAssistantMessage from:body" />
 
     {# Mode pills. The chat is the star and these are its remote control,
@@ -72,7 +80,7 @@
     <div class="grid grid-cols-3 gap-2">
         {{ toggle_pill(
             id='dark-mode-toggle', name='is_dark_mode', checked=is_dark_mode|default(False),
-            label='Dark mode', icon_class='icon-[ri--moon-clear-line]',
+            label='Dark', icon_class='icon-[ri--moon-clear-line]',
             hx_post='/toggle-dark-mode',
             hx_trigger='click, toggleDarkMode from:body delay:100ms'
         ) }}
@@ -84,7 +92,7 @@
         ) }}
         {{ toggle_pill(
             id='pizza-mode-toggle', name='is_pizza_mode', checked=is_pizza_mode|default(False),
-            label='Pizza mode', icon_class='icon-[game-icons--full-pizza]',
+            label='Pizza', icon_class='icon-[game-icons--full-pizza]',
             hx_post='/toggle-pizza-mode',
             hx_trigger='click, togglePizzaMode from:body delay:300ms'
         ) }}
