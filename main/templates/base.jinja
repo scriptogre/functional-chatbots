@@ -17,7 +17,7 @@
 <body class="font-sans text-neutral-800 dark:text-neutral-100">
 
 <div class="*:fixed *:inset-0 *:transition-opacity *:duration-[250ms] *:size-full">
-    <div id="background-dark" class="opacity-0 dark:opacity-100 bg-[linear-gradient(175deg,rgb(18,23,24)_50%,rgb(29,38,49)_100%)]"></div>
+    <div id="background-dark" class="opacity-0 dark:opacity-100 bg-neutral-940"></div>
     <div id="background-light" class="opacity-100 dark:opacity-0 bg-gradient-to-br from-neutral-100 to-neutral-300"></div>
     <video id="background-pizza" src="{{ static('main/pizza-footage.webm') }}" class="object-cover opacity-0 pizza:opacity-100 dark:saturate-50 brightness-50 duration-200 after:content-[''] relative after:absolute after:size-full after:opacity-20 after:bg-black" muted autoplay loop playsinline></video>
 </div>
@@ -28,7 +28,7 @@
     </a>
 </div>
 
-<main class="flex flex-col sm:flex-row justify-center items-start sm:items-center h-screen py-14 px-6 z-10 animate-fade">
+<main class="flex flex-col sm:flex-row justify-center items-start sm:items-center h-screen py-14 px-6 z-10">
     {% block content %}{% endblock %}
 </main>
 

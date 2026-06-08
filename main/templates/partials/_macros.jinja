@@ -17,7 +17,7 @@
 {% macro chat_input(name) %}
 <label class="group relative flex items-center rounded-xl ps-6 pe-0 bg-neutral-100 shadow border border-transparent !bg-opacity-90 transition-[border-color,background-color,padding] duration-[250ms] has-[input:focus:placeholder-shown]:border-neutral-300 has-[:focus]:border-neutral-400 has-[input:focus]:outline-2 has-[input:focus:placeholder-shown]:outline-0 dark:bg-neutral-920 dark:border-neutral-200/5 dark:has-[input:focus:placeholder-shown]:border-neutral-200/15 dark:has-[input:focus]:border-neutral-200/50 sm:fullscreen:pe-2 sm:fullscreen:ps-7 sm:fullscreen:py-1 [&>input]:outline-none [&>input]:bg-transparent [&>input]:grow [&>input]:text-sm [&>input]:sm:fullscreen:text-lg">
     <input name="{{ name }}" type="text" placeholder="Type a message..." autocomplete="off" required />
-    <button type="submit" class="inline-flex justify-center items-center size-10 m-2 rounded-xl text-neutral-400 transition-colors duration-[250ms] group-has-[input:focus:placeholder-shown]:text-neutral-500 group-has-[input:focus]:text-neutral-600 dark:text-neutral-600 dark:group-has-[input:focus:placeholder-shown]:text-neutral-500 dark:group-has-[input:focus]:text-neutral-200">
+    <button type="submit" class="inline-flex justify-center items-center size-10 m-2 rounded-xl text-neutral-400 transition-colors duration-[250ms] group-has-[input:focus:placeholder-shown]:text-neutral-500 group-has-[input:focus]:text-neutral-600 dark:text-neutral-400 dark:group-has-[input:focus:placeholder-shown]:text-neutral-300 dark:group-has-[input:focus]:text-neutral-200">
         <span class="icon-[fluent--send-28-filled] size-5 transition-transform sm:fullscreen:scale-125"></span>
     </button>
     <span class="hidden group-has-[input:focus]:sm:flex group-has-[input:focus:placeholder-shown]:hidden items-center text-xs absolute -bottom-6 left-0 animate-fade tracking-wide pizza:text-neutral-100">
@@ -30,9 +30,9 @@
 
 {% macro chat_placeholder() %}
 <div class="size-full flex flex-col items-center justify-center transition-transform duration-[250ms] sm:fullscreen:scale-125 group-has-[.chat-message:not(#typing-indicator)]:hidden">
-    <span class="icon-[tabler--message-chatbot-filled] [animation:fade_1s_both_50ms] size-12 text-neutral-500"></span>
-    <h3 class="[animation:fade_1s_both_100ms] mt-2 tracking-wide">Functional Chatbots</h3>
-    <p class="[animation:fade_1s_both_150ms] mt-1 text-sm text-neutral-500">Send a message to start the conversation.</p>
+    <span class="icon-[tabler--message-chatbot-filled] size-12 text-neutral-500 dark:text-neutral-400"></span>
+    <h3 class="mt-2 tracking-wide">Functional Chatbots</h3>
+    <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Send a message to start the conversation.</p>
 </div>
 {% endmacro %}
 
@@ -42,7 +42,7 @@
     <input name="{{ name }}" type="radio" value="{{ value }}" class="peer hidden" required {% if checked %}checked{% endif %} />
     <span class="icon-[lets-icons--check-fill] text-transparent peer-checked:text-orange-500 dark:peer-checked:text-amber-500 absolute right-2 top-2 duration-200"></span>
     <span class="{{ icon_class }} size-10 text-neutral-400 group-hover:text-neutral-500 dark:text-neutral-400 dark:group-hover:text-neutral-300 peer-checked:text-orange-500 dark:peer-checked:text-amber-500 duration-200"></span>
-    <span class="peer-checked:font-[500]">{{ label }}</span>
+    <span class="peer-checked:font-[600]">{{ label }}</span>
 </label>
 {% endmacro %}
 
@@ -58,7 +58,7 @@
             <span class="{% if order.name == 'cheese' %}icon-[ph--cheese-fill]{% elif order.name == 'pepperoni' %}icon-[mdi--spicy]{% else %}icon-[ph--plant-fill]{% endif %} absolute -bottom-2 -right-1.5 size-2.5 text-orange-500 dark:text-amber-500"></span>
         </span>
         <div class="flex flex-col mx-3">
-            <span class="font-[500]">Pizza Order #{{ order.id }}</span>
+            <span class="font-[600]">Pizza Order #{{ order.id }}</span>
             <span class="text-xs sm:text-sm">{{ order.name|title }}, {{ order.size|title }}</span>
         </div>
     </div>
@@ -93,6 +93,6 @@
         <span class="icon-[game-icons--full-pizza] size-12"></span>
         <span class="icon-[ic--baseline-plus] size-5 absolute -top-10 -right-2"></span>
     </span>
-    <span class="mt-2 block text-sm font-[500] transition-transform sm:fullscreen:scale-125 duration-[250ms]">Place a new pizza order</span>
+    <span class="mt-2 block text-sm font-[600] transition-transform sm:fullscreen:scale-125 duration-[250ms]">Create pizza order</span>
 </button>
 {% endmacro %}
