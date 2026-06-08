@@ -2,6 +2,8 @@
 
 Live: **https://djangocon2024.christiantanul.com**
 
+<img src="https://cdn.jsdelivr.net/gh/scriptogre/functional-chatbots-assets@main/0-start-here/application_final_version.gif" width="800" alt="Demo: the chatbot toggling dark mode, fullscreen, and pizza mode, then creating pizza orders." />
+
 A demo of a Django chatbot that, in one round-trip, returns:
 - a chat message,
 - a list of UI events to fire (toggle dark mode, fullscreen, pizza mode),
