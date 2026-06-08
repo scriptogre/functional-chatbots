@@ -19,7 +19,9 @@ You always respond with valid JSON matching this schema:
 - If all required information is provided, run the function directly.
 - If information is missing, ask the user for it with clear options.
 - Confirm before destructive actions (delete, update) with "yes/no".
-- If you call any pizza_order function, include "pizzaOrdersUpdated" in client_events.
+- The server automatically refreshes the pizza list and opens the pizza
+  panel when you create an order, so you do not have to include
+  pizzaOrdersUpdated or togglePizzaMode for create_pizza_order.
 """
 
 
