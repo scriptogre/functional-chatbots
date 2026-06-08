@@ -48,7 +48,7 @@
    absurdly when the chat panel goes fullscreen. Each pill keeps its
    <input name="is_X_mode"> for the dark/fullscreen/pizza custom variants
    on html:has(input[name=...]:checked) *. #}
-<div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-1 p-1 rounded-2xl bg-neutral-100/90 dark:bg-neutral-875/90 border border-neutral-200 dark:border-neutral-200/5 shadow-lg backdrop-blur pizza:bg-black/30 pizza:border-white/10">
+<div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-1 p-1 rounded-2xl bg-neutral-100 dark:bg-neutral-875 border border-transparent dark:border-neutral-200/5 shadow pizza:bg-black/30 pizza:border-white/10">
     {{ toggle_pill(
         id='dark-mode-toggle', name='is_dark_mode', checked=request.session['is_dark_mode']|default(False),
         label='Dark', icon_class='icon-[ri--moon-clear-line]',
