@@ -107,4 +107,4 @@ os.environ.setdefault('GROQ_API_KEY', GROQ_API_KEY)
 
 # Pick any Groq model: https://console.groq.com/docs/models
 # litellm prefixes Groq models with `groq/`.
-LLM_MODEL = env('LLM_MODEL', default='groq/openai/gpt-oss-20b')
+LLM_MODEL = env('LLM_MODEL', default='groq/llama-3.3-70b-versatile')
