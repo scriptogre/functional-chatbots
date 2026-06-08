@@ -1,9 +1,9 @@
 {% from "partials/_macros.jinja" import radio_label %}
 
-<dialog class="[animation:fade_0.2s_both] bg-transparent text-neutral-800 dark:text-neutral-300 backdrop:backdrop-blur-lg backdrop:bg-black/50"
+<dialog class="[animation:fade_0.2s_both] m-auto bg-transparent text-neutral-800 dark:text-neutral-300 backdrop:backdrop-blur-lg backdrop:bg-black/50"
         hx-on::load="this.showModal()" hx-on:close="this.remove()">
 
-    <div class="flex flex-col p-6 px-8 bg-neutral-100 border border-transparent shadow rounded-2xl transition-colors duration-[250ms] dark:bg-[#161C1D] dark:border-neutral-200/5">
+    <div class="flex flex-col p-6 px-8 bg-neutral-100 border border-transparent shadow rounded-2xl transition-colors duration-[250ms] dark:bg-neutral-920 dark:border-neutral-200/5">
 
         <form hx-post="/pizza-orders/add" hx-target="body" hx-swap="beforeend" hx-on::after-request="htmx.find('dialog').close()">
 
@@ -27,5 +27,5 @@
         </form>
     </div>
 
-    <form method="dialog" class="fixed inset-0 cursor-pointer -z-10" hx-on:click="this.submit()"></form>
+    <form method="dialog" class="fixed inset-0 -z-10" hx-on:click="this.submit()"></form>
 </dialog>

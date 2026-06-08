@@ -9,18 +9,18 @@
     <img class="size-8 rounded-full object-cover transition-transform duration-[250ms] sm:fullscreen:scale-125"
          src="{{ static('main/assistant-avatar.webp') }}" alt="Assistant Avatar" />
     {% endif %}
-    <div class="py-3 px-4 w-fit max-w-sm text-sm hyphens-auto whitespace-pre-wrap rounded-xl shadow transition-[background-color,font-size,line-height,padding] duration-[250ms] sm:fullscreen:py-4 sm:fullscreen:px-5 sm:fullscreen:text-lg sm:fullscreen:max-w-3xl sm:fullscreen:rounded-2xl {% if role == 'assistant' %}bg-neutral-200 dark:bg-[#212626] rounded-bl-none sm:fullscreen:rounded-bl-none{% else %}bg-orange-300 dark:bg-amber-900 rounded-br-none sm:fullscreen:rounded-br-none{% endif %}">{{- content -}}</div>
+    <div class="py-3 px-4 w-fit max-w-sm text-sm hyphens-auto whitespace-pre-wrap rounded-xl shadow transition-[background-color,font-size,line-height,padding] duration-[250ms] sm:fullscreen:py-4 sm:fullscreen:px-5 sm:fullscreen:text-lg sm:fullscreen:max-w-3xl sm:fullscreen:rounded-2xl {% if role == 'assistant' %}bg-neutral-200 dark:bg-neutral-875 rounded-bl-none sm:fullscreen:rounded-bl-none{% else %}bg-orange-300 dark:bg-amber-900 rounded-br-none sm:fullscreen:rounded-br-none{% endif %}">{{- content -}}</div>
 </div>
 {% endmacro %}
 
 
 {% macro chat_input(name) %}
-<label class="group relative flex items-center rounded-xl ps-6 pe-0 bg-neutral-100 shadow border border-transparent !bg-opacity-90 transition-[border-color,background-color,padding] duration-[250ms] has-[input:focus:placeholder-shown]:border-neutral-300 has-[:focus]:border-neutral-400 has-[input:focus]:outline-2 has-[input:focus:placeholder-shown]:outline-0 dark:bg-[#161C1D] dark:border-neutral-200/5 dark:has-[input:focus:placeholder-shown]:border-neutral-200/15 dark:has-[input:focus]:border-neutral-200/50 sm:fullscreen:pe-2 sm:fullscreen:ps-7 sm:fullscreen:py-1 [&>input]:outline-none [&>input]:bg-transparent [&>input]:grow [&>input]:text-sm [&>input]:sm:fullscreen:text-lg">
+<label class="group relative flex items-center rounded-xl ps-6 pe-0 bg-neutral-100 shadow border border-transparent !bg-opacity-90 transition-[border-color,background-color,padding] duration-[250ms] has-[input:focus:placeholder-shown]:border-neutral-300 has-[:focus]:border-neutral-400 has-[input:focus]:outline-2 has-[input:focus:placeholder-shown]:outline-0 dark:bg-neutral-920 dark:border-neutral-200/5 dark:has-[input:focus:placeholder-shown]:border-neutral-200/15 dark:has-[input:focus]:border-neutral-200/50 sm:fullscreen:pe-2 sm:fullscreen:ps-7 sm:fullscreen:py-1 [&>input]:outline-none [&>input]:bg-transparent [&>input]:grow [&>input]:text-sm [&>input]:sm:fullscreen:text-lg">
     <input name="{{ name }}" type="text" placeholder="Type a message..." autocomplete="off" required />
     <button type="submit" class="inline-flex justify-center items-center size-10 m-2 rounded-xl text-neutral-400 transition-colors duration-[250ms] group-has-[input:focus:placeholder-shown]:text-neutral-500 group-has-[input:focus]:text-neutral-600 dark:text-neutral-600 dark:group-has-[input:focus:placeholder-shown]:text-neutral-500 dark:group-has-[input:focus]:text-neutral-200">
         <span class="icon-[fluent--send-28-filled] size-5 transition-transform sm:fullscreen:scale-125"></span>
     </button>
-    <span class="hidden group-has-[input:focus]:sm:flex group-has-[input:focus:placeholder-shown]:hidden items-center text-xs absolute -bottom-6 left-0 [animation:fade_0.5s_both] tracking-wide pizza:text-neutral-100">
+    <span class="hidden group-has-[input:focus]:sm:flex group-has-[input:focus:placeholder-shown]:hidden items-center text-xs absolute -bottom-6 left-0 animate-fade tracking-wide pizza:text-neutral-100">
         <span class="icon-[mi--enter] me-1.5 text-lg translate-y-[1px] inline-block"></span>
         Press <span class="px-1 font-[monospace] translate-y-[0px] text-[0.7rem]">Enter</span> to send the message
     </span>
@@ -48,7 +48,7 @@
 
 
 {% macro pizza_order(order) %}
-<div class="pizza-order group/order flex items-center justify-between mb-2 cursor-pointer hover:bg-neutral-700/10 dark:hover:bg-neutral-100/10 p-4 pe-6 rounded-2xl select-none [animation:fade_0.5s_both] transition-colors duration-[250ms]"
+<div class="pizza-order group/order flex items-center justify-between mb-2 cursor-pointer hover:bg-neutral-700/10 dark:hover:bg-neutral-100/10 p-4 pe-6 rounded-2xl select-none animate-fade transition-colors duration-[250ms]"
      hx-get="/pizza-orders/{{ order.id }}/update" hx-target="body" hx-swap="beforeend">
     <div class="flex items-center">
         <span class="relative inline-grid place-items-center">
@@ -86,9 +86,10 @@
 
 
 {% macro pizza_order_placeholder() %}
-<button type="button" class="absolute inset-0 size-full group block rounded-2xl border-2 border-dashed border-neutral-300 dark:border-neutral-500 text-center hover:border-neutral-400 focus:border-orange-500 dark:focus:border-amber-500 duration-200 whitespace-nowrap transition-colors group-has-[.pizza-order]:hidden"
+<button type="button"
+        class="absolute inset-0 size-full group block cursor-pointer rounded-2xl border-2 border-dashed border-neutral-400 dark:border-neutral-500 text-center text-neutral-500 dark:text-neutral-300 hover:border-orange-500 hover:text-orange-500 hover:bg-orange-500/5 dark:hover:border-amber-500 dark:hover:text-amber-500 dark:hover:bg-amber-500/10 focus:border-orange-500 dark:focus:border-amber-500 duration-200 whitespace-nowrap transition-colors group-has-[.pizza-order]:hidden"
         hx-get="/pizza-orders/add" hx-target="body" hx-swap="beforeend">
-    <span class="mx-auto relative text-neutral-400 group-hover:text-orange-500 group-focus:text-orange-500 dark:group-hover:text-amber-500 dark:group-focus:text-amber-500 transition-[color,transform] sm:fullscreen:scale-125 duration-[250ms]">
+    <span class="mx-auto relative text-neutral-500 group-hover:text-orange-500 group-focus:text-orange-500 dark:text-neutral-300 dark:group-hover:text-amber-500 dark:group-focus:text-amber-500 transition-[color,transform] sm:fullscreen:scale-125 group-hover:scale-110 duration-[250ms]">
         <span class="icon-[game-icons--full-pizza] size-12"></span>
         <span class="icon-[ic--baseline-plus] size-5 absolute -top-10 -right-2"></span>
     </span>

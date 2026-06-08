@@ -44,7 +44,7 @@
 <!-- Pizza Orders -->
 <div class="size-full max-h-[0px] max-sm:pizza:max-h-[33%] sm:max-h-full sm:h-[400px] sm:fullscreen:h-full sm:max-w-0 sm:pizza:max-w-[400px] flex-col gap-3 pizza:mb-3 sm:pizza:mb-0 sm:pizza:me-3 opacity-0 pizza:opacity-100 pointer-events-none pizza:pointer-events-auto transition-[height,max-width,max-height] will-change-[height,max-height,max-width]">
 
-    <div class="relative flex flex-col p-6 overflow-y-auto size-full bg-neutral-100 border border-transparent shadow rounded-2xl [scrollbar-width:none] [-ms-overflow-style:none] scroll-smooth transition-colors duration-[250ms] dark:bg-[#161C1D] dark:border-neutral-200/5 !bg-opacity-90 group">
+    <div class="relative flex flex-col p-6 overflow-y-auto size-full bg-neutral-100 border border-transparent shadow rounded-2xl [scrollbar-width:none] [-ms-overflow-style:none] scroll-smooth transition-colors duration-[250ms] dark:bg-neutral-920 dark:border-neutral-200/5 !bg-opacity-90 group">
 
         <div id="pizza-orders" class="flex flex-col max-h-[calc(100%-3.5rem)] overflow-scroll"
              hx-get="/pizza-orders" hx-select="#pizza-orders" hx-swap="outerHTML" hx-trigger="pizzaOrdersUpdated from:body" hx-disinherit="hx-select">
@@ -70,7 +70,7 @@
 <!-- Chat -->
 <div class="flex flex-col gap-3 w-full h-full sm:max-w-[500px] sm:max-h-[400px] sm:fullscreen:max-w-full sm:fullscreen:max-h-full max-w-xl transition-[max-width,max-height]">
 
-    <div id="chat-container" class="flex flex-col size-full p-4 bg-neutral-100 border border-transparent shadow rounded-2xl overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] scroll-smooth transition-colors duration-[250ms] dark:bg-[#161C1D] dark:border-neutral-200/5 bg-opacity-95 dark:bg-opacity-95 sm:p-8 group">
+    <div id="chat-container" class="flex flex-col size-full p-4 bg-neutral-100 border border-transparent shadow rounded-2xl overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] scroll-smooth transition-colors duration-[250ms] dark:bg-neutral-920 dark:border-neutral-200/5 bg-opacity-95 dark:bg-opacity-95 sm:p-8 group">
 
         {# Hidden until an assistant request is in flight. No `inline-flex`
            default: `.hidden` plus a variant that flips to inline-flex is the
@@ -79,7 +79,7 @@
              class="chat-message hidden order-last [body:has(#trigger-assistant.htmx-request)_&]:inline-flex items-end mb-4 gap-3 sm:fullscreen:mb-6 flex-row [animation:fade_0.5s_both_0.25s]">
             <img class="size-8 rounded-full object-cover transition-transform duration-[250ms] sm:fullscreen:scale-125"
                  src="{{ static('main/assistant-avatar.webp') }}" alt="Assistant Avatar" />
-            <div class="py-3 px-4 w-fit max-w-sm text-sm hyphens-auto whitespace-pre-wrap rounded-xl shadow transition-[background-color,font-size,line-height,padding] duration-[250ms] sm:fullscreen:py-4 sm:fullscreen:px-5 sm:fullscreen:text-lg sm:fullscreen:max-w-3xl sm:fullscreen:rounded-2xl bg-neutral-200 dark:bg-[#212626] rounded-bl-none sm:fullscreen:rounded-bl-none">Typing...</div>
+            <div class="py-3 px-4 w-fit max-w-sm text-sm hyphens-auto whitespace-pre-wrap rounded-xl shadow transition-[background-color,font-size,line-height,padding] duration-[250ms] sm:fullscreen:py-4 sm:fullscreen:px-5 sm:fullscreen:text-lg sm:fullscreen:max-w-3xl sm:fullscreen:rounded-2xl bg-neutral-200 dark:bg-neutral-875 rounded-bl-none sm:fullscreen:rounded-bl-none">Typing...</div>
         </div>
 
         {{ chat_placeholder() }}

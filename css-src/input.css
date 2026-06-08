@@ -4,12 +4,64 @@
 
 @source "../main/**/*.{jinja,py}";
 
+@theme {
+    --font-sans: 'Barlow', system-ui, sans-serif;
+
+    /* Custom neutral palette in OKLCH (shared with intreaba-legea, dromos).
+       Same names as Tailwind's neutral-*, but warmer midtones and extra steps
+       (10, 25, 75, 150, 350, 450, 550, 650, 725, 750, 775, 825, 875, 910..940). */
+    --color-neutral-10: oklch(99.8% 0 0);
+    --color-neutral-25: oklch(99.5% 0 0);
+    --color-neutral-50: oklch(98.5% 0 0);
+    --color-neutral-75: oklch(97.8% 0 0);
+    --color-neutral-100: oklch(97% 0 0);
+    --color-neutral-150: oklch(95.6% 0 0);
+    --color-neutral-200: oklch(92.2% 0 0);
+    --color-neutral-300: oklch(87% 0 0);
+    --color-neutral-350: oklch(80.9% 0 0);
+    --color-neutral-400: oklch(70.8% 0 0);
+    --color-neutral-450: oklch(62.9% 0 0);
+    --color-neutral-500: oklch(55.6% 0 0);
+    --color-neutral-550: oklch(49.7% 0 0);
+    --color-neutral-600: oklch(43.9% 0 0);
+    --color-neutral-650: oklch(40.5% 0 0);
+    --color-neutral-700: oklch(37.1% 0 0);
+    --color-neutral-725: oklch(34.6% 0 0);
+    --color-neutral-750: oklch(32.0% 0 0);
+    --color-neutral-775: oklch(29.5% 0 0);
+    --color-neutral-800: oklch(26.9% 0 0);
+    --color-neutral-825: oklch(25.3% 0 0);
+    --color-neutral-850: oklch(23.7% 0 0);
+    --color-neutral-875: oklch(22.1% 0 0);
+    --color-neutral-900: oklch(20.5% 0 0);
+    --color-neutral-910: oklch(19.3% 0 0);
+    --color-neutral-920: oklch(18.1% 0 0);
+    --color-neutral-930: oklch(16.9% 0 0);
+    --color-neutral-940: oklch(15.7% 0 0);
+    --color-neutral-950: oklch(14.5% 0 0);
+
+    /* Named animations. Use as `animate-fade`. */
+    --animate-fade: fade 0.5s both;
+}
+
 @custom-variant dark (&:where(html:has(input[name="is_dark_mode"]:checked) *));
 @custom-variant fullscreen (&:where(html:has(input[name="is_fullscreen_mode"]:checked) *));
 @custom-variant pizza (&:where(html:has(input[name="is_pizza_mode"]:checked) *));
 
-@theme {
-    --font-sans: "Barlow", sans-serif;
+@layer base {
+    html {
+        /* Kill the 300ms tap delay and double-tap-to-zoom on mobile. */
+        touch-action: manipulation;
+    }
+
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    ::selection {
+        background: oklch(75% 0.18 60 / 0.4);
+    }
 }
 
 @keyframes fade {
