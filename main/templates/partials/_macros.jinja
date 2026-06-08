@@ -1,4 +1,6 @@
-{# Reusable Jinja2 macros for chat, toggles, pizza UI. #}
+{# Reusable Jinja2 macros for chat, toggles, pizza UI.
+   Icons use the @iconify/tailwind4 plugin. Pattern: icon dash open-bracket
+   prefix dash dash name close-bracket as a utility class. #}
 
 {% macro chat_message(role, content, extra_class='', id='') %}
 <div {% if id %}id="{{ id }}"{% endif %}
@@ -16,10 +18,10 @@
 <label class="group relative flex items-center rounded-xl ps-6 pe-0 bg-neutral-100 shadow border border-transparent !bg-opacity-90 transition-[border-color,background-color,padding] duration-[250ms] has-[input:focus:placeholder-shown]:border-neutral-300 has-[:focus]:border-neutral-400 has-[input:focus]:outline-2 has-[input:focus:placeholder-shown]:outline-0 dark:bg-[#161C1D] dark:border-neutral-200/5 dark:has-[input:focus:placeholder-shown]:border-neutral-200/15 dark:has-[input:focus]:border-neutral-200/50 sm:fullscreen:pe-2 sm:fullscreen:ps-7 sm:fullscreen:py-1 [&>input]:outline-none [&>input]:bg-transparent [&>input]:grow [&>input]:text-sm [&>input]:sm:fullscreen:text-lg">
     <input name="{{ name }}" type="text" placeholder="Type a message..." autocomplete="off" required />
     <button type="submit" class="inline-flex justify-center items-center text-neutral-400 transition-colors duration-[250ms] group-has-[input:focus:placeholder-shown]:text-neutral-500 group-has-[input:focus]:text-neutral-600 dark:text-neutral-600 dark:group-has-[input:focus:placeholder-shown]:text-neutral-500 dark:group-has-[input:focus]:text-neutral-200">
-        <iconify-icon icon="fluent:send-28-filled" class="size-10 m-2 inline-flex justify-center items-center rounded-xl text-xl transition-transform sm:fullscreen:scale-125"></iconify-icon>
+        <span class="icon-[fluent--send-28-filled] size-10 m-2 inline-flex justify-center items-center rounded-xl text-xl transition-transform sm:fullscreen:scale-125"></span>
     </button>
     <span class="hidden group-has-[input:focus]:sm:flex group-has-[input:focus:placeholder-shown]:hidden items-center text-xs absolute -bottom-6 left-0 [animation:fade_0.5s_both] tracking-wide pizza:text-neutral-100">
-        <iconify-icon icon="mi:enter" class="me-1.5 text-lg translate-y-[1px] inline"></iconify-icon>
+        <span class="icon-[mi--enter] me-1.5 text-lg translate-y-[1px] inline-block"></span>
         Press <span class="px-1 font-[monospace] translate-y-[0px] text-[0.7rem]">Enter</span> to send the message
     </span>
 </label>
@@ -28,33 +30,18 @@
 
 {% macro chat_placeholder() %}
 <div class="size-full flex flex-col items-center justify-center transition-transform duration-[250ms] sm:fullscreen:scale-125 group-has-[.chat-message:not(#typing-indicator)]:hidden">
-    <iconify-icon icon="tabler:message-chatbot-filled" class="[animation:fade_1s_both_50ms] size-12 text-neutral-500" height="none"></iconify-icon>
+    <span class="icon-[tabler--message-chatbot-filled] [animation:fade_1s_both_50ms] size-12 text-neutral-500"></span>
     <h3 class="[animation:fade_1s_both_100ms] mt-2 tracking-wide">Functional Chatbots</h3>
     <p class="[animation:fade_1s_both_150ms] mt-1 text-sm text-neutral-500">Send a message to start the conversation.</p>
 </div>
 {% endmacro %}
 
 
-{% macro button(extra_class='', type='button', caller=None) %}
-<button type="{{ type }}" class="inline-flex items-center justify-center px-3 py-1.5 mt-auto rounded-lg transition-colors duration-[250ms] font-[500] whitespace-nowrap {{ extra_class }}">{{ caller() }}</button>
-{% endmacro %}
-
-
-{% macro toggle(name, checked, icon_on, icon_off, extra_class='', id='') %}
-<label {% if id %}id="{{ id }}"{% endif %}
-       class="group inline-flex p-1 text-lg cursor-pointer text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 duration-200 {{ extra_class }}">
-    <input name="{{ name }}" class="hidden" type="checkbox" autocomplete="off" {% if checked %}checked{% endif %} />
-    <iconify-icon icon="{{ icon_on }}" class="hidden group-has-[:checked]:block"></iconify-icon>
-    <iconify-icon icon="{{ icon_off }}" class="group-has-[:checked]:hidden"></iconify-icon>
-</label>
-{% endmacro %}
-
-
-{% macro radio_label(name, value, label, icon, checked=False) %}
+{% macro radio_label(name, value, label, icon_class, checked=False) %}
 <label class="group relative inline-flex flex-col items-center w-24 text-neutral-700 dark:text-neutral-300 has-[:checked]:text-neutral-900 dark:has-[:checked]:text-neutral-50 text-sm gap-1 px-3 py-1.5 sm:px-4 sm:py-2 cursor-pointer border border-transparent ring-2 ring-transparent hover:border-neutral-500/50 dark:hover:border-neutral-400/50 has-[:checked]:border-orange-500 dark:has-[:checked]:border-amber-500 rounded-lg duration-200 select-none">
     <input name="{{ name }}" type="radio" value="{{ value }}" class="peer hidden" required {% if checked %}checked{% endif %} />
-    <iconify-icon icon="lets-icons:check-fill" class="text-transparent peer-checked:text-orange-500 dark:peer-checked:text-amber-500 absolute right-2 top-2 duration-200" height="none"></iconify-icon>
-    <iconify-icon icon="{{ icon }}" class="size-10 text-neutral-400 group-hover:text-neutral-500 dark:text-neutral-400 dark:group-hover:text-neutral-300 peer-checked:text-orange-500 dark:peer-checked:text-amber-500 duration-200" height="none"></iconify-icon>
+    <span class="icon-[lets-icons--check-fill] text-transparent peer-checked:text-orange-500 dark:peer-checked:text-amber-500 absolute right-2 top-2 duration-200"></span>
+    <span class="{{ icon_class }} size-10 text-neutral-400 group-hover:text-neutral-500 dark:text-neutral-400 dark:group-hover:text-neutral-300 peer-checked:text-orange-500 dark:peer-checked:text-amber-500 duration-200"></span>
     <span class="peer-checked:font-[500]">{{ label }}</span>
 </label>
 {% endmacro %}
@@ -65,10 +52,10 @@
      hx-get="/pizza-orders/{{ order.id }}/update" hx-target="body" hx-swap="beforeend">
     <div class="flex items-center">
         <span class="relative inline-grid place-items-center">
-            <iconify-icon icon="game-icons:full-pizza" class="size-5 sm:fullscreen:size-7 text-orange-500 dark:text-amber-500" height="none"></iconify-icon>
-            <iconify-icon icon="mingcute:loading-fill" class="animate-spin size-2.5 sm:fullscreen:size-3 absolute -top-2 -right-1.5 transition-[color,opacity] duration-[250ms] text-orange-500 dark:text-amber-500 group-has-[[style*='--seconds-left:_0']]/order:opacity-0 sm:fullscreen:-top-2.5" height="none"></iconify-icon>
-            <iconify-icon icon="bi:check" class="absolute -top-2.5 -right-2.5 text-green-700 dark:text-green-600 transition-[color,opacity] duration-[250ms] invisible opacity-0 group-has-[[style*='--seconds-left:_0']]/order:visible group-has-[[style*='--seconds-left:_0']]/order:opacity-100"></iconify-icon>
-            <iconify-icon icon="{% if order.name == 'cheese' %}ph:cheese-fill{% elif order.name == 'pepperoni' %}mdi:spicy{% else %}ph:plant-fill{% endif %}" height="none" class="absolute -bottom-2 -right-1.5 size-2.5 text-orange-500 dark:text-amber-500"></iconify-icon>
+            <span class="icon-[game-icons--full-pizza] size-5 sm:fullscreen:size-7 text-orange-500 dark:text-amber-500"></span>
+            <span class="icon-[mingcute--loading-fill] animate-spin size-2.5 sm:fullscreen:size-3 absolute -top-2 -right-1.5 transition-[color,opacity] duration-[250ms] text-orange-500 dark:text-amber-500 group-has-[[style*='--seconds-left:_0']]/order:opacity-0 sm:fullscreen:-top-2.5"></span>
+            <span class="icon-[bi--check] absolute -top-2.5 -right-2.5 text-green-700 dark:text-green-600 transition-[color,opacity] duration-[250ms] invisible opacity-0 group-has-[[style*='--seconds-left:_0']]/order:visible group-has-[[style*='--seconds-left:_0']]/order:opacity-100"></span>
+            <span class="{% if order.name == 'cheese' %}icon-[ph--cheese-fill]{% elif order.name == 'pepperoni' %}icon-[mdi--spicy]{% else %}icon-[ph--plant-fill]{% endif %} absolute -bottom-2 -right-1.5 size-2.5 text-orange-500 dark:text-amber-500"></span>
         </span>
         <div class="flex flex-col mx-3">
             <span class="font-[500]">Pizza Order #{{ order.id }}</span>
@@ -102,8 +89,8 @@
 <button type="button" class="absolute inset-0 size-full group block rounded-2xl border-2 border-dashed border-neutral-300 dark:border-neutral-500 text-center hover:border-neutral-400 focus:border-orange-500 dark:focus:border-amber-500 duration-200 whitespace-nowrap transition-colors group-has-[.pizza-order]:hidden"
         hx-get="/pizza-orders/add" hx-target="body" hx-swap="beforeend">
     <span class="mx-auto relative text-neutral-400 group-hover:text-orange-500 group-focus:text-orange-500 dark:group-hover:text-amber-500 dark:group-focus:text-amber-500 transition-[color,transform] sm:fullscreen:scale-125 duration-[250ms]">
-        <iconify-icon icon="game-icons:full-pizza" class="size-12" height="none"></iconify-icon>
-        <iconify-icon icon="ic:baseline-plus" class="size-5 absolute -top-10 -right-2" height="none"></iconify-icon>
+        <span class="icon-[game-icons--full-pizza] size-12"></span>
+        <span class="icon-[ic--baseline-plus] size-5 absolute -top-10 -right-2"></span>
     </span>
     <span class="mt-2 block text-sm font-[500] transition-transform sm:fullscreen:scale-125 duration-[250ms]">Place a new pizza order</span>
 </button>

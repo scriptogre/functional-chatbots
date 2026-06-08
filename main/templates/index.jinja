@@ -13,19 +13,19 @@
            hx-select="#dark-mode-toggle"
            hx-swap="outerHTML">
         <input name="is_dark_mode" class="hidden" type="checkbox" autocomplete="off" {% if is_dark_mode|default(False) %}checked{% endif %} />
-        <iconify-icon icon="ri:moon-clear-line" class="hidden group-has-[:checked]:block"></iconify-icon>
-        <iconify-icon icon="ri:sun-line" class="group-has-[:checked]:hidden"></iconify-icon>
+        <span class="icon-[ri--sun-line] group-has-[:checked]:hidden"></span>
+        <span class="icon-[ri--moon-clear-line] hidden group-has-[:checked]:inline-block"></span>
     </label>
 
     <label id="fullscreen-mode-toggle"
-           class="group inline-flex p-1 text-lg cursor-pointer text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 duration-200 hidden sm:inline-flex"
+           class="group hidden p-1 text-lg cursor-pointer text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 hover:dark:text-neutral-50 pizza:text-neutral-300 hover:pizza:text-neutral-50 duration-200 sm:inline-flex"
            hx-post="/toggle-fullscreen-mode"
            hx-trigger="click, toggleFullscreenMode from:body delay:200ms"
            hx-select="#fullscreen-mode-toggle"
            hx-swap="outerHTML">
         <input name="is_fullscreen_mode" class="hidden" type="checkbox" autocomplete="off" {% if is_fullscreen_mode|default(False) %}checked{% endif %} />
-        <iconify-icon icon="majesticons:minimize" class="hidden group-has-[:checked]:block"></iconify-icon>
-        <iconify-icon icon="majesticons:maximize" class="group-has-[:checked]:hidden"></iconify-icon>
+        <span class="icon-[majesticons--maximize] group-has-[:checked]:hidden"></span>
+        <span class="icon-[majesticons--minimize] hidden group-has-[:checked]:inline-block"></span>
     </label>
 
     <label id="pizza-mode-toggle"
@@ -35,8 +35,8 @@
            hx-select="#pizza-mode-toggle"
            hx-swap="outerHTML">
         <input name="is_pizza_mode" class="hidden" type="checkbox" autocomplete="off" {% if is_pizza_mode|default(False) %}checked{% endif %} />
-        <iconify-icon icon="fluent-emoji-flat:pizza" class="hidden group-has-[:checked]:block"></iconify-icon>
-        <iconify-icon icon="fluent-emoji-high-contrast:pizza" class="group-has-[:checked]:hidden"></iconify-icon>
+        <span class="icon-[fluent-emoji-high-contrast--pizza] group-has-[:checked]:hidden"></span>
+        <span class="icon-[fluent-emoji-flat--pizza] hidden group-has-[:checked]:inline-block"></span>
     </label>
 
 </div>
@@ -53,8 +53,11 @@
             {% endfor %}
         </div>
 
+        {# Default hidden; show as inline-flex only when an order exists.
+           Don't combine `hidden` + `inline-flex` directly: Tailwind v4
+           emits .inline-flex after .hidden so the latter never wins. #}
         <button id="add-pizza-order-button" type="button"
-                class="hidden group-has-[.pizza-order]:block text-black bg-orange-500 hover:bg-orange-600 dark:bg-amber-500 dark:hover:bg-amber-400 inline-flex items-center justify-center px-3 py-1.5 mt-auto rounded-lg transition-colors duration-[250ms] font-[500] whitespace-nowrap"
+                class="hidden group-has-[.pizza-order]:inline-flex text-black bg-orange-500 hover:bg-orange-600 dark:bg-amber-500 dark:hover:bg-amber-400 items-center justify-center px-3 py-1.5 mt-auto rounded-lg transition-colors duration-[250ms] font-[500] whitespace-nowrap"
                 hx-get="/pizza-orders/add" hx-target="body" hx-swap="beforeend">
             Add Pizza Order
         </button>
@@ -69,7 +72,15 @@
 
     <div id="chat-container" class="flex flex-col size-full p-4 bg-neutral-100 border border-transparent shadow rounded-2xl overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] scroll-smooth transition-colors duration-[250ms] dark:bg-[#161C1D] dark:border-neutral-200/5 bg-opacity-95 dark:bg-opacity-95 sm:p-8 group">
 
-        {{ chat_message(role='assistant', content='Typing...', id='typing-indicator', extra_class='hidden order-last [body:has(#trigger-assistant.htmx-request)_&]:flex [animation:fade_0.5s_both_0.25s]') }}
+        {# Hidden until an assistant request is in flight. No `inline-flex`
+           default: `.hidden` plus a variant that flips to inline-flex is the
+           only conflict-free pattern in Tailwind v4's source order. #}
+        <div id="typing-indicator"
+             class="chat-message hidden order-last [body:has(#trigger-assistant.htmx-request)_&]:inline-flex items-end mb-4 gap-3 sm:fullscreen:mb-6 flex-row [animation:fade_0.5s_both_0.25s]">
+            <img class="size-8 rounded-full object-cover transition-transform duration-[250ms] sm:fullscreen:scale-125"
+                 src="{{ static('main/assistant-avatar.webp') }}" alt="Assistant Avatar" />
+            <div class="py-3 px-4 w-fit max-w-sm text-sm hyphens-auto whitespace-pre-wrap rounded-xl shadow transition-[background-color,font-size,line-height,padding] duration-[250ms] sm:fullscreen:py-4 sm:fullscreen:px-5 sm:fullscreen:text-lg sm:fullscreen:max-w-3xl sm:fullscreen:rounded-2xl bg-neutral-200 dark:bg-[#212626] rounded-bl-none sm:fullscreen:rounded-bl-none">Typing...</div>
+        </div>
 
         {{ chat_placeholder() }}
 

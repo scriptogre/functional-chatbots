@@ -24,9 +24,10 @@ media/
 .DS_Store
 
 # Tailwind
-tailwindcss
-tailwindcss.exe
 main/static/main/css/
+
+# Node / Bun
+node_modules/
 
 # Logs
 *.log

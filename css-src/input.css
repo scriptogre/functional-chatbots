@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
-@source "../main/templates";
-@source "../main/views.py";
-@source "../main/pizza_orders";
+@plugin "@iconify/tailwind4";
+
+@source "../main/**/*.{jinja,py}";
 
 @custom-variant dark (&:where(html:has(input[name="is_dark_mode"]:checked) *));
 @custom-variant fullscreen (&:where(html:has(input[name="is_fullscreen_mode"]:checked) *));
