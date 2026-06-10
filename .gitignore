@@ -23,9 +23,6 @@ media/
 .vscode/
 .DS_Store
 
-# Tailwind: only the built output is ignored, not source CSS like fonts.css
-main/static/main/css/output.css
-
 # Node / Bun
 node_modules/
 

@@ -5,11 +5,10 @@ FROM oven/bun:1-debian AS css-build
 WORKDIR /app
 COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile
-COPY css-src ./css-src
-COPY main ./main
+COPY app ./app
 RUN bunx tailwindcss \
-        -i ./css-src/input.css \
-        -o ./main/static/main/css/output.css \
+        -i ./app/static/css/input.css \
+        -o ./app/static/css/output.css \
         --minify
 
 
@@ -52,7 +51,7 @@ WORKDIR /app
 # App code + venv
 COPY --from=py-build /app /app
 # Built CSS
-COPY --from=css-build /app/main/static/main/css/output.css /app/main/static/main/css/output.css
+COPY --from=css-build /app/app/static/css/output.css /app/app/static/css/output.css
 
 # Scripts
 COPY ./compose/django/start /start

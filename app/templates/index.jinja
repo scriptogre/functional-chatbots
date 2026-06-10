@@ -1,0 +1,76 @@
+{% extends "base.jinja" %}
+{% from "partials/_macros.jinja" import chat_message, chat_input, chat_placeholder, pizza_order, pizza_order_placeholder, prompt_chip %}
+
+{% block content %}
+
+<!-- Pizza Orders -->
+<div class="size-full max-h-[0px] max-sm:pizza:max-h-[calc(50%-2.5rem)] sm:max-h-full sm:h-[400px] sm:fullscreen:h-full sm:max-w-0 sm:pizza:max-w-[400px] flex-col gap-3 sm:pizza:me-3 opacity-0 pizza:opacity-100 pointer-events-none pizza:pointer-events-auto transition-[height,max-width,max-height] will-change-[height,max-height,max-width]">
+
+    <div class="relative flex flex-col p-4 sm:p-6 overflow-hidden size-full bg-neutral-25 border border-transparent shadow rounded-2xl scroll-smooth transition-colors dark:bg-neutral-875 dark:border-neutral-200/5 contain-content group">
+
+        <div id="pizza-orders" class="flex flex-col group-has-[.pizza-order]:flex-1 min-h-0 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none]"
+             hx-get="/pizza-orders" hx-select="#pizza-orders" hx-swap="outerHTML" hx-trigger="pizzaOrdersUpdated from:body" hx-disinherit="hx-select">
+            {% for order in pizza_orders|default([]) %}
+                {{ pizza_order(order) }}
+            {% endfor %}
+        </div>
+
+        {{ pizza_order_placeholder() }}
+
+        {# Action chips: flex-none keeps them visible while #pizza-orders
+           takes the remaining space and scrolls internally. #}
+        <div class="hidden group-has-[.pizza-order]:flex flex-none flex-col items-center gap-2 sm:gap-3 pt-3 sm:pt-6">
+            <p class="hidden sm:block text-xs uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Ask the assistant</p>
+            <div class="flex flex-wrap justify-center items-center gap-2">
+                {{ prompt_chip('Order another', 'icon-[ic--baseline-plus]') }}
+                {{ prompt_chip('Make it larger', 'icon-[tabler--edit]') }}
+                {{ prompt_chip('Cancel last', 'icon-[tabler--trash]') }}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Chat -->
+<div class="flex flex-col gap-3 w-full max-w-xl max-sm:flex-1 max-sm:min-h-0 sm:h-full sm:max-w-[500px] sm:max-h-[400px] sm:fullscreen:max-w-full sm:fullscreen:max-h-full transition-[max-width,max-height]">
+
+    {# Natural top-to-bottom flow: oldest message first, newest last.
+       hx-swap="beforeend scroll:#chat-container:bottom" appends each new
+       message and auto-scrolls to the bottom. Drag-select works normally
+       because DOM order matches visual order. #}
+    <div id="chat-container" class="flex flex-col flex-1 min-h-0 w-full p-4 bg-white border border-transparent shadow rounded-2xl overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] scroll-smooth transition-colors dark:bg-neutral-875 dark:border-neutral-200/5 sm:p-8 contain-content group">
+
+        {% for msg in chat_messages|default([]) %}
+            {{ chat_message(role=msg.role, content=msg.content) }}
+        {% endfor %}
+
+        {# Typing indicator: order-last keeps it visually at the bottom even
+           after more messages get appended below it. #}
+        <div id="typing-indicator"
+             class="chat-message hidden order-last [&.htmx-request]:inline-flex items-center mb-4 gap-4 flex-row [animation:fade_0.5s_both_0.25s]">
+            <img class="size-7 rounded-full object-cover transition-transform"
+                 src="{{ static('assistant-avatar.webp') }}" alt="Assistant Avatar" />
+            <div class="max-w-sm text-sm animate-pulse text-neutral-700 dark:text-neutral-200 pb-0.5">Thinking…</div>
+        </div>
+
+        {{ chat_placeholder() }}
+
+    </div>
+
+    <form id="user-message-form"
+          hx-post="/add-user-message"
+          hx-target="#chat-container"
+          hx-swap="beforeend scroll:#chat-container:bottom"
+          hx-on::after-request="htmx.find('input[name=message]').value = ''">
+        {{ chat_input(name='message') }}
+    </form>
+
+    <input id="trigger-assistant" type="hidden"
+           hx-post="/add-assistant-message"
+           hx-target="#chat-container"
+           hx-swap="beforeend scroll:#chat-container:bottom"
+           hx-trigger="generateAssistantMessage from:body"
+           hx-indicator="#typing-indicator" />
+</div>
+
+{% endblock %}

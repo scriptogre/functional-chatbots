@@ -7,7 +7,7 @@ set -o nounset
 # Common
 # --------------------------------------------------
 python manage.py migrate --noinput
-python manage.py collectstatic --noinput --clear
+python manage.py collectstatic --noinput --clear --ignore=input.css
 
 if [ "$ENVIRONMENT" = "local" ]; then
     echo "Running in local development mode"
@@ -15,5 +15,5 @@ if [ "$ENVIRONMENT" = "local" ]; then
 
 elif [ "$ENVIRONMENT" = "production" ]; then
     echo "Running in production mode"
-    exec gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 2
+    exec granian --interface wsgi --host 0.0.0.0 --port 8000 --workers 2 config.wsgi:application
 fi

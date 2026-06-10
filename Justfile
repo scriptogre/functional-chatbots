@@ -33,9 +33,9 @@ migrate:
 
 # Tailwind watch + minify (uses bunx so @iconify/tailwind4 plugin loads)
 tailwindcss-watch:
-    bunx tailwindcss -i ./css-src/input.css -o ./main/static/main/css/output.css --watch --minify
+    bunx tailwindcss -i ./app/static/css/input.css -o ./app/static/css/output.css --watch --minify
 
 # Tailwind one-shot build
 tailwindcss-build:
     bun install --frozen-lockfile
-    bunx tailwindcss -i ./css-src/input.css -o ./main/static/main/css/output.css --minify
+    bunx tailwindcss -i ./app/static/css/input.css -o ./app/static/css/output.css --minify

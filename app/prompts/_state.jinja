@@ -1,0 +1,10 @@
+[Current State]
+- Dark mode: {{ 'ON' if is_dark_mode else 'OFF' }}
+- Fullscreen mode: {{ 'ON' if is_fullscreen_mode else 'OFF' }}
+- Pizza panel: {{ 'ON' if is_pizza_mode else 'OFF' }}
+- Pizza orders (count={{ pizza_orders|length }}):
+{% for order in pizza_orders %}
+  - #{{ order.id }}: {{ order.size }} {{ order.name }} ({{ 'finished' if order.is_finished else order.seconds_left ~ 's left' }})
+{% else %}
+  (none)
+{% endfor %}

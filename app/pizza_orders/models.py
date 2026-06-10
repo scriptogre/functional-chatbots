@@ -12,6 +12,7 @@ class PizzaOrder(models.Model):
 
     name = models.CharField(max_length=50, choices=NAMES)
     size = models.CharField(max_length=50, choices=SIZES)
+    session_key = models.CharField(max_length=40, db_index=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
     total_time = models.IntegerField(default=60)
 

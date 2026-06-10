@@ -1,0 +1,134 @@
+{# Reusable Jinja2 macros for chat, toggles, pizza UI.
+   Icons use the @iconify/tailwind4 plugin. Pattern: icon dash open-bracket
+   prefix dash dash name close-bracket as a utility class. #}
+
+{% macro chat_message(role, content, extra_class='', id='') %}
+<div {% if id %}id="{{ id }}"{% endif %}
+     class="chat-message inline-flex items-center mb-4 gap-4 [content-visibility:auto] [contain-intrinsic-size:auto_80px] {% if role == 'assistant' %}flex-row{% else %}flex-row-reverse{% endif %} {{ extra_class }}">
+    {% if role == 'assistant' %}
+    <img class="size-7 rounded-full object-cover transition-transform"
+         src="{{ static('assistant-avatar.webp') }}" alt="Assistant Avatar" />
+    <div class="max-w-sm text-sm leading-relaxed hyphens-auto whitespace-pre-wrap pb-0.5">{{- content -}}</div>
+    {% else %}
+    <div class="py-3 px-4 w-fit max-w-sm text-sm hyphens-auto whitespace-pre-wrap rounded-3xl rounded-br-lg bg-neutral-100 dark:bg-neutral-825 border border-transparent dark:border-neutral-800/30">{{- content -}}</div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+
+{% macro chat_input(name) %}
+{# Border is near-invisible by default and only nudges one step up
+   on hover / focus, matching dromos's chat input style. No outline,
+   no big color jumps. #}
+<label class="group relative flex items-center rounded-2xl ps-6 pe-0 bg-white shadow border border-transparent dark:bg-neutral-875 dark:border-neutral-200/5 hover:border-neutral-200 dark:hover:border-neutral-200/10 has-[:focus]:border-neutral-300 dark:has-[:focus]:border-neutral-200/15 transition-[background-color,border-color] [&>input]:outline-none [&>input]:bg-transparent [&>input]:grow [&>input]:text-base sm:[&>input]:text-sm">
+    <input id="chat-input" name="{{ name }}" type="text" placeholder="Type a message..." autocomplete="off" autofocus required class="placeholder:text-neutral-500 dark:placeholder:text-neutral-400" />
+    <button type="submit" class="inline-flex justify-center items-center size-10 m-2 rounded-xl text-neutral-400 transition-colors group-has-[input:focus:placeholder-shown]:text-neutral-500 group-has-[input:focus]:text-neutral-600 dark:text-neutral-400 dark:group-has-[input:focus:placeholder-shown]:text-neutral-300 dark:group-has-[input:focus]:text-neutral-200">
+        <span class="icon-[fluent--send-28-filled] size-5 transition-transform"></span>
+    </button>
+    </label>
+{% endmacro %}
+
+
+{% macro chat_placeholder() %}
+<div class="size-full flex flex-col items-center justify-center text-center px-4 gap-3 transition-transform group-has-[.chat-message:not(#typing-indicator)]:hidden">
+    <p class="text-xs uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Try one of these</p>
+    <div class="flex flex-col items-center gap-2">
+        <span class="contents dark:hidden">{{ prompt_chip('Turn on dark mode', 'icon-[ri--moon-clear-line]') }}</span>
+        <span class="hidden dark:contents">{{ prompt_chip('Turn off dark mode', 'icon-[ri--moon-clear-line]') }}</span>
+        <span class="hidden sm:contents">
+            {{ prompt_chip('Toggle fullscreen mode', 'icon-[majesticons--maximize]') }}
+        </span>
+        {{ prompt_chip('Switch to pizza order mode', 'icon-[fluent-emoji-flat--pizza]') }}
+    </div>
+</div>
+{% endmacro %}
+
+
+{# A mode pill with an iOS-style toggle switch. Keeps the original
+   <input name="is_X_mode"> so the custom Tailwind variants (dark:,
+   fullscreen:, pizza:) keep matching `html:has(input[name=X]:checked) *`.
+   Same hx-post + hx-trigger + hx-select pattern as the old toggles. #}
+{% macro toggle_pill(id, name, checked, label, icon_class, hx_post, hx_trigger, input_script='', label_script='', hx_include='') %}
+<label id="{{ id }}"
+       class="group inline-flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer select-none hover:bg-neutral-150 dark:hover:bg-neutral-825 transition-colors"
+       hx-post="{{ hx_post }}"
+       hx-trigger="{{ hx_trigger }}"
+       hx-select="#{{ id }}"
+       hx-swap="outerHTML"
+       {% if hx_include %}hx-include="{{ hx_include }}"{% endif %}
+       {% if label_script %}_="{{ label_script }}"{% endif %}>
+    <input name="{{ name }}" type="checkbox" autocomplete="off" class="peer sr-only" {% if checked %}checked{% endif %}{% if input_script %} _="{{ input_script }}"{% endif %} />
+    <span class="{{ icon_class }} size-4 shrink-0 text-neutral-500 dark:text-neutral-400 peer-checked:text-orange-500 dark:peer-checked:text-amber-500 transition-colors"></span>
+    <span class="hidden sm:inline text-sm text-neutral-700 dark:text-neutral-300 peer-checked:font-[600]">{{ label }}</span>
+    <span aria-hidden="true"
+          class="relative shrink-0 w-9 h-5 rounded-full bg-neutral-300 dark:bg-neutral-700 peer-checked:bg-orange-500 dark:peer-checked:bg-amber-500 transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:size-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4"></span>
+</label>
+{% endmacro %}
+
+
+{# Clickable suggestion that prefills the chat input and submits.
+   Text lives on data-prompt so HTML attribute escaping handles quotes. #}
+{% macro prompt_chip(text, icon_class) %}
+<button type="button"
+        data-prompt="{{ text }}"
+        class="inline-flex items-center gap-1.5 cursor-pointer px-3 py-1 text-xs rounded-full border border-neutral-200 dark:border-neutral-200/5 text-neutral-600 dark:text-neutral-300 hover:border-orange-500/60 hover:text-orange-500 dark:hover:border-amber-500/60 dark:hover:text-amber-500 transition"
+        _="on click
+             set #chat-input.value to my @data-prompt
+             then call #user-message-form.requestSubmit()">
+    <span class="{{ icon_class }} size-3.5"></span>
+    {{ text }}
+</button>
+{% endmacro %}
+
+
+{% macro pizza_order(order) %}
+<div class="pizza-order group/order flex items-center gap-3 sm:gap-4 mb-2 p-2 px-3 sm:p-3 sm:px-4 animate-fade {% if order.is_finished %}finished{% endif %}">
+    <span class="icon-[game-icons--full-pizza] size-7 shrink-0 text-orange-500 dark:text-amber-500"></span>
+    <div class="flex flex-col flex-1 min-w-0">
+        <span class="text-[11px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Order #{{ order.id }}</span>
+        <span class="text-sm font-[600] truncate">{{ order.size|title }} {{ order.name|title }}</span>
+    </div>
+    <div class="inline-flex items-center text-sm font-[600] shrink-0">
+        {{ pizza_order_countdown(order.seconds_left) }}
+        <span class="icon-[tabler--check] size-5 hidden group-[.finished]/order:inline-block text-neutral-500 dark:text-neutral-400"></span>
+    </div>
+</div>
+{% endmacro %}
+
+
+{% macro pizza_order_countdown(seconds_left) %}
+<span class="tabular-nums group-[.finished]/order:hidden"
+      _="init
+            set sec to {{ seconds_left }}
+            if sec is 0
+                add .finished to closest .pizza-order
+            end
+            repeat until sec is 0 or not me.isConnected
+                wait 1s
+                set sec to sec - 1
+                if me.isConnected
+                    if sec is 0
+                        add .finished to closest .pizza-order
+                    else
+                        set my innerText to sec
+                    end
+                end">{{ seconds_left }}</span>
+{% endmacro %}
+
+
+{% macro pizza_order_placeholder() %}
+<div class="my-auto w-full flex flex-col items-center gap-3 sm:gap-6 text-center group-has-[.pizza-order]:hidden">
+    <div class="flex flex-col items-center gap-1">
+        <span class="icon-[game-icons--full-pizza] size-10 sm:size-12 text-neutral-400 dark:text-neutral-400"></span>
+        <h2 class="text-base font-[600] text-neutral-700 dark:text-neutral-200">Pizza Orders</h2>
+    </div>
+    <div class="flex flex-col items-center gap-2 sm:gap-3">
+        <p class="text-xs uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Ask the assistant</p>
+        <div class="flex flex-col items-center gap-1.5 sm:gap-2">
+            {{ prompt_chip('I want a large cheese pizza', 'icon-[ph--cheese-fill]') }}
+            {{ prompt_chip('I want a small pepperoni pizza', 'icon-[mdi--spicy]') }}
+            {{ prompt_chip('I want a medium vegetarian pizza', 'icon-[ph--plant-fill]') }}
+        </div>
+    </div>
+</div>
+{% endmacro %}

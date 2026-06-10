@@ -1,0 +1,5 @@
+{% if result %}
+Updated order #{{ result.id }}: {{ result.size }} {{ result.name }}.
+{% else %}
+No such order in this session.
+{% endif %}

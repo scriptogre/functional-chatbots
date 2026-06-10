@@ -2,7 +2,7 @@
 
 @plugin "@iconify/tailwind4";
 
-@source "../main/**/*.{jinja,py}";
+@source "../../**/*.{jinja,py}";
 
 @theme {
     --font-sans: 'Barlow', system-ui, sans-serif;
@@ -40,6 +40,9 @@
     --color-neutral-940: oklch(15.7% 0 0);
     --color-neutral-950: oklch(14.5% 0 0);
 
+    /* Snappier default for any `transition` / `transition-*` utility. */
+    --default-transition-duration: 50ms;
+
     /* Named animations. Use as `animate-fade`. */
     --animate-fade: fade 0.5s both;
 }
@@ -53,7 +56,7 @@
         /* Kill the 300ms tap delay and double-tap-to-zoom on mobile. */
         touch-action: manipulation;
         /* Sets the color of the rubber-band / overscroll area too. */
-        background-color: var(--color-neutral-200);
+        background-color: var(--color-neutral-50);
         transition: background-color 250ms ease;
     }
 

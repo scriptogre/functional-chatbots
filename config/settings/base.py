@@ -5,7 +5,7 @@ from pathlib import Path
 import environ
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-APPS_DIR = BASE_DIR / 'main'
+APPS_DIR = BASE_DIR / 'app'
 
 env = environ.Env()
 
@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django_jinja',
     'django_htmx',
-    'main',
-    'main.pizza_orders',
+    'app',
+    'app.pizza_orders',
 ]
 
 # MIDDLEWARE
@@ -102,9 +102,6 @@ X_FRAME_OPTIONS = 'DENY'
 # External APIs
 # ------------------------------------------------------------------------------
 GROQ_API_KEY = env('GROQ_API_KEY', default='')
-# Make available to litellm
-os.environ.setdefault('GROQ_API_KEY', GROQ_API_KEY)
 
 # Pick any Groq model: https://console.groq.com/docs/models
-# litellm prefixes Groq models with `groq/`.
-LLM_MODEL = env('LLM_MODEL', default='groq/llama-3.3-70b-versatile')
+LLM_MODEL = env('LLM_MODEL', default='meta-llama/llama-4-scout-17b-16e-instruct')
