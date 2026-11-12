@@ -18,7 +18,7 @@ services:
       - .env
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.production
-    expose:
-      - 8000
+    ports:
+      - "127.0.0.1:18008:8000"
     command: /start
     restart: unless-stopped
